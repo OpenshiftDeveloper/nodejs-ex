@@ -8,6 +8,12 @@ Object.assign=require('object-assign')
 const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
+var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
+
+var dataSeriesNormalizer = new DataSeriesNormalizer(3);
+
+console.log(dataSeriesNormalizer.getAge());
+
 app.engine('html', require('ejs').renderFile);
 
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
