@@ -59,12 +59,15 @@ var initDb = function(callback) {
   });
 };
 
+
+
 app.get('/', function (req, res) {
   // try to initialize the db on every request if it's not already
   // initialized.
   if (!db) {
     initDb(function(err){});
   }
+  
   if (db) {
     var col = db.collection('counts');
     // Create a document with request IP and current time of request
@@ -73,10 +76,14 @@ app.get('/', function (req, res) {
       if (err) {
         console.log('Error running count. Message:\n'+err);
       }
-      res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails });
+     
+      res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: global.priceData });
     });
   } else {
-    res.render('index.html', { pageCountMessage : null});
+      coindesk.getCurrentPrice().then(function (data) {
+          console.log(data);
+    res.render('index.html', { pageCountMessage : null, currentPriceData: data.bpi.USD.rate_float});
+    })
   }
 });
 
@@ -110,9 +117,7 @@ console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app ;
 
-coindesk.getCurrentPrice().then(function (data) {  
-  //console.log(data);
-})
+
 
 googleTrends.interestOverTime({keyword: 'Women\'s march'})
 .then(function(results){
