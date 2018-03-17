@@ -9,7 +9,8 @@ const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
 app.engine('html', require('ejs').renderFile);
-app.use(morgan('combined'))
+
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',

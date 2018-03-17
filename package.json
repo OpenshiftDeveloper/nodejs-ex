@@ -4,16 +4,18 @@
   "description": "Node.js sample app for OpenShift 3",
   "main": "server.js",
   "dependencies": {
+    "angular-chart.js": "1.1.1",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
+    "chart.js": "^2.7.2",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
+    "google-trends-api": "4.6.1",
     "mocha": "^2.4.5",
     "mongodb": "^2.1.16",
     "morgan": "^1.7.0",
-    "object-assign":"4.1.0",
-    "google-trends-api":"4.6.1",
-    "node-coindesk-api":"1.0.0"        
+    "node-coindesk-api": "1.0.0",
+    "object-assign": "4.1.0"
   },
   "engine": {
     "node": "*",
@@ -32,5 +34,7 @@
   "bugs": {
     "url": "http://github.com/openshift/nodejs-ex/issues"
   },
-  "homepage": "http://github.com/openshift/nodejs-ex"
+  "directories": {
+    "node_modules": "./node_moes",   
+  }
 }
