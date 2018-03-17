@@ -76,14 +76,16 @@ app.get('/', function (req, res) {
       if (err) {
         console.log('Error running count. Message:\n'+err);
       }
-     
-      res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: global.priceData });
+      coindesk.getCurrentPrice().then(function (data) {
+        console.log(data);
+        res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: data });
+      })
     });
   } else {
       coindesk.getCurrentPrice().then(function (data) {
-          console.log(data);
-    res.render('index.html', { pageCountMessage : null, currentPriceData: data.bpi.USD.rate_float});
-    })
+            console.log(data);
+            res.render('index.html', { pageCountMessage : null, currentPriceData: data.bpi.USD.rate_float});
+        })
   }
 });
 
