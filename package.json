@@ -33,8 +33,5 @@
   "license": "CC-BY-1.0",
   "bugs": {
     "url": "http://github.com/openshift/nodejs-ex/issues"
-  },
-  "directories": {
-    "node_modules": "./node_moes",   
   }
 }
