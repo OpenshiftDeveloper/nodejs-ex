@@ -78,7 +78,7 @@ app.get('/', function (req, res) {
       }
       coindesk.getCurrentPrice().then(function (data) {
         console.log(data);
-        res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: data });
+        res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: data.bpi.USD.rate_float });
       })
     });
   } else {
