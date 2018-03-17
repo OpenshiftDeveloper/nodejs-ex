@@ -5,7 +5,8 @@ var express = require('express'),
     
 Object.assign=require('object-assign')
 
-const coindesk = require('node-coindesk-api')
+const coindesk = require('node-coindesk-api');
+const googleTrends = require('google-trends-api');
 
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
@@ -112,3 +113,11 @@ module.exports = app ;
 coindesk.getCurrentPrice().then(function (data) {  
   //console.log(data);
 })
+
+googleTrends.interestOverTime({keyword: 'Women\'s march'})
+.then(function(results){
+  //console.log('These results are awesome', results);
+})
+.catch(function(err){
+  //console.error('Oh no there was an error', err);
+});
