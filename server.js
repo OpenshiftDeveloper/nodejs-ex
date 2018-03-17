@@ -5,6 +5,8 @@ var express = require('express'),
     
 Object.assign=require('object-assign')
 
+const coindesk = require('node-coindesk-api')
+
 app.engine('html', require('ejs').renderFile);
 app.use(morgan('combined'))
 
@@ -106,3 +108,7 @@ app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app ;
+
+coindesk.getCurrentPrice().then(function (data) {  
+  //console.log(data);
+})
