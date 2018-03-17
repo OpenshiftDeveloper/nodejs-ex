@@ -7,29 +7,27 @@ function DataSeriesNormalizer(age) {
 }
 
 method.normalizeGoogleTrends = function (data) {
-    var date = new Date(data);
-    return date.toUTCString();
+    normalizedTrends = [];
+    results = JSON.parse(data);
+    timelineData = results.default.timelineData;
+    
+    for (var i in timelineData) {
+        thick = new Object();
+        thick.time = new Date(timelineData[i].formattedAxisTime);
+        thick.value = timelineData[i].value;
+        normalizedTrends[i] = thick;
+    }    
+    return normalizedTrends;
 };
 
 method.getAge = function () {
     googleTrends.interestOverTime({keyword: 'Valentines Day'})
             .then(function (results) {
-                normalizedTrends = [];
-                results = JSON.parse(results);
-                timelineData = results.default.timelineData;
-                thick = new Object();
+                normalizedTrends = method.normalizeGoogleTrends(results);
                 for (var i in timelineData) {
-                    thick.time = timelineData[i].formattedAxisTime;
-                    thick.value = timelineData[i].value;
-                    normalizedTrends[i] = thick;
-                    
-                }
-                for (var i in normalizedTrends) {
                     console.log(normalizedTrends[i].time);
                 }
                 
-                isoDate = method.normalizeGoogleTrends("Jan 1, 2004");
-                console.log(isoDate);
             });
 
     return this._age;
