@@ -214,14 +214,18 @@ pre {
 <script src="node_modules/chart.js/dist/Chart.min.js"></script>
 <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
 <script>
-angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope) {
+angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $http) {
+    
+    $http({ method: 'GET',
+            url: '/chartmodel'
+         }).then(function (response){
+            chartModel = response.data;
+            $scope.labels = chartModel.labels;
+            $scope.series = chartModel.series;
+            $scope.data = chartModel.data;
+         }, function (error) {});
 
-  $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-  $scope.series = ['Series A', 'Series B'];
-  $scope.data = [
-    [65, 59, 80, 81, 56, 55, 40],
-    [28, 48, 40, 19, 86, 27, 90]
-  ];
+  
   $scope.onClick = function (points, evt) {
     console.log(points, evt);
   };
@@ -340,9 +344,7 @@ $ git push</pre>
                    <span class="code" id="count-value">No database configured</span>
                    </p>
                 <%} %>
-                <p>Btc Price Data:
-                    <%=currentPriceData%>
-                </p>
+               
 
           </section>
         </div>

@@ -9,22 +9,9 @@ const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
 var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
-var ChartDataProducer = require("./chartDataProducer.js");
+var ChartModelProducer = require("./chartModelProducer.js");
 
-var dataSeriesNormalizer = new DataSeriesNormalizer(3);
-var chartDataProducer = new ChartDataProducer();
 
-Promise.all([coindesk.getHistoricalClosePrices(), googleTrends.interestOverTime({
-   keyword: 'Valentines Day',  startTime: new Date(Date.now() - (31 * 24 * 60 * 60 * 1000)),granularTimeResolution: false
-
- })]).then(function(values) {
-  //console.log(values[1]);
-  normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);
-  normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);
-  //console.log(normalizedCoinDesk);
-  chartData = chartDataProducer.getChartData(normalizedCoinDesk,normalizedGoogleTrends);
-  console.log(chartData);
-});
 
 
 
@@ -96,17 +83,11 @@ app.get('/', function (req, res) {
     col.count(function(err, count){
       if (err) {
         console.log('Error running count. Message:\n'+err);
-      }
-      coindesk.getCurrentPrice().then(function (data) {
-        console.log(data);
-        res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails, currentPriceData: data.bpi.USD.rate_float });
-      })
+      }      
+      res.render('index.html', { pageCountMessage : count, dbInfo: dbDetails});      
     });
-  } else {
-      coindesk.getCurrentPrice().then(function (data) {
-            console.log(data);
-            res.render('index.html', { pageCountMessage : null, currentPriceData: data.bpi.USD.rate_float});
-        })
+  } else {      
+      res.render('index.html', { pageCountMessage : null});      
   }
 });
 
@@ -123,6 +104,20 @@ app.get('/pagecount', function (req, res) {
   } else {
     res.send('{ pageCount: -1 }');
   }
+});
+
+app.get('/chartmodel', function (req, res) {
+     Promise.all([coindesk.getHistoricalClosePrices(), googleTrends.interestOverTime({
+    keyword: 'Valentines Day',  startTime: new Date(Date.now() - (31 * 24 * 60 * 60 * 1000)),granularTimeResolution: false})]).then(function(values) {
+    //console.log(values[1]);
+    var chartModelProducer = new ChartModelProducer();
+    var dataSeriesNormalizer = new DataSeriesNormalizer();
+    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);
+    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);
+    //console.log(normalizedCoinDesk);
+    chartModel = chartModelProducer.getChartModel(normalizedCoinDesk,normalizedGoogleTrends);
+    res.send(chartModel);
+});
 });
 
 // error handling

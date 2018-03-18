@@ -6,9 +6,6 @@ function ChartModelProducer() {
 
 var ChartDataProducer = require("./chartDataProducer.js");
 
-
-
-
 method.getChartModel = function (baseData, adjustedData) {
     chartModel = new Object();
     var chartDataProducer = new ChartDataProducer();
