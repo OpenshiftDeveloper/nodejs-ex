@@ -1,7 +1,8 @@
 angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $http) {
 
     $http({method: 'GET',
-        url: '/chartmodel'
+        url: '/chartmodel',
+        params: {daysBack: 30}
     }).then(function (response) {
         chartModel = response.data;
         $scope.labels = chartModel.labels;
