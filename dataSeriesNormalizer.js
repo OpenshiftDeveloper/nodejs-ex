@@ -15,7 +15,7 @@ method.normalizeGoogleTrends = function (data) {
 
     for (var i in timelineData) {
         tick = new Object();
-         //console.log(timelineData[i].formattedTime);
+        // console.log(timelineData[i]);
         // console.log(timelineData[i].value);
         tick.time = new Date(timelineData[i].formattedTime);
         tick.value = timelineData[i].value;
@@ -25,9 +25,11 @@ method.normalizeGoogleTrends = function (data) {
 };
 
 method.normalizeCoinDesk = function (data) {
+    
     normalizedTrends = [];
     results = data;
     timelineData = results.bpi;
+    //console.log(results.bpi);
     i = 0;
     for (var time in timelineData) {
         tick = new Object();        

@@ -20,7 +20,7 @@ function getTimeLabels(baseData) {
     series = []
     for (var i in baseData) {
         tick = baseData[i];
-        series[i] = tick.time;
+        series[i] = tick.time.toDateString();       
     }
     return series;
 }
