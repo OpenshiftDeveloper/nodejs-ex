@@ -9,10 +9,24 @@ const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
 var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
+var ChartDataProducer = require("./chartDataProducer.js");
 
 var dataSeriesNormalizer = new DataSeriesNormalizer(3);
+var chartDataProducer = new ChartDataProducer();
 
-console.log(dataSeriesNormalizer.getAge());
+Promise.all([coindesk.getHistoricalClosePrices(), googleTrends.interestOverTime({
+   keyword: 'Valentines Day',  startTime: new Date(Date.now() - (31 * 24 * 60 * 60 * 1000)),granularTimeResolution: false
+
+ })]).then(function(values) {
+  //console.log(values[1]);
+  normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);
+  normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);
+  //console.log(normalizedCoinDesk);
+  chartData = chartDataProducer.getChartData(normalizedCoinDesk,normalizedGoogleTrends);
+  console.log(chartData);
+});
+
+
 
 app.engine('html', require('ejs').renderFile);
 
