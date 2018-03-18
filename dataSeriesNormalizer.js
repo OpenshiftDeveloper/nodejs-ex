@@ -9,10 +9,10 @@ function DataSeriesNormalizer(age) {
 }
 
 method.normalizeGoogleTrends = function (data) {
-    normalizedTrends = [];
+    
     results = JSON.parse(data);
     timelineData = results.default.timelineData;
-
+    normalizedTrends = [timelineData.length];
     for (var i in timelineData) {
         tick = new Object();
         // console.log(timelineData[i]);
@@ -21,23 +21,22 @@ method.normalizeGoogleTrends = function (data) {
         tick.value = timelineData[i].value;
         normalizedTrends[i] = tick;
     }
+    //console.log(normalizedTrends.length);
     return normalizedTrends;
 };
 
-method.normalizeCoinDesk = function (data) {
-    
-    normalizedTrends = [];
+method.normalizeCoinDesk = function (data) {        
     results = data;
-    timelineData = results.bpi;
-    //console.log(results.bpi);
-    i = 0;
+    timelineData = results.bpi;    
+    normalizedTrends = [Object.keys(timelineData).length];
+    i = 0;    
     for (var time in timelineData) {
         tick = new Object();        
         tick.time = new Date(time);
         tick.value = timelineData[time];        
         normalizedTrends[i] = tick;
         i++;
-    }    
+    }
     return normalizedTrends;
 };
 

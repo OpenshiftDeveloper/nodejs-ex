@@ -113,8 +113,8 @@ app.get('/chartmodel', function (req, res) {
     //console.log(values[1]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
-    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);
-    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);
+    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    
+    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);    
     //console.log(normalizedCoinDesk);
     chartModel = chartModelProducer.getChartModel(normalizedCoinDesk,normalizedGoogleTrends);
     res.send(chartModel);
@@ -135,13 +135,3 @@ app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app ;
-
-
-
-googleTrends.interestOverTime({keyword: 'Women\'s march'})
-.then(function(results){
-  //console.log('These results are awesome', results);
-})
-.catch(function(err){
-  //console.error('Oh no there was an error', err);
-});
