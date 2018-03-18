@@ -114,13 +114,14 @@ app.get('/chartmodel', function (req, res) {
     options.start = startTime;
     options.end = new Date(Date.now());    
      Promise.all([coindesk.getHistoricalClosePrices(options), googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: startTime,granularTimeResolution: false})]).then(function(values) {
+    keyword: 'bitcoin',  startTime: startTime,granularTimeResolution: true})]).then(function(values) {
     //console.log(values[1]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    
-    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]);    
-    //console.log(normalizedCoinDesk);
+    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]); 
+    
+    
     chartModel = chartModelProducer.getChartModel(normalizedCoinDesk,normalizedGoogleTrends);
     res.send(chartModel);
 });

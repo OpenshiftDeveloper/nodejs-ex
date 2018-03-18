@@ -18,6 +18,9 @@ method.normalizeGoogleTrends = function (data) {
         // console.log(timelineData[i]);
         // console.log(timelineData[i].value);
         tick.time = new Date(timelineData[i].formattedTime);
+        if ( isNaN( tick.time.getTime() ) ) {
+            tick.time =new Date(timelineData[i].formattedAxisTime);
+        }        
         tick.value = timelineData[i].value;
         normalizedTrends[i] = tick;
     }

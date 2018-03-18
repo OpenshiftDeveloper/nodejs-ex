@@ -19,7 +19,9 @@
             <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
                 <button ng-click="loadChartModel(7)">week</button>
                 <button ng-click="loadChartModel(31)">month</button>
-                <button ng-click="loadChartModel(250)">max</button>
+                <button ng-click="loadChartModel(6*31)">six months</button>
+                <button ng-click="loadChartModel(12*31)">year</button>
+                <button ng-click="loadChartModel(5*12*31)">five years</button>
             </section>
             <canvas id="line" class="chart chart-line" chart-data="data"
                     chart-labels="labels" chart-series="series" chart-options="options"
