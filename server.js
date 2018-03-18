@@ -18,6 +18,7 @@ var ChartModelProducer = require("./chartModelProducer.js");
 app.engine('html', require('ejs').renderFile);
 
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use('/app', express.static(__dirname + '/app.js'));
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
@@ -108,7 +109,7 @@ app.get('/pagecount', function (req, res) {
 
 app.get('/chartmodel', function (req, res) {
      Promise.all([coindesk.getHistoricalClosePrices(), googleTrends.interestOverTime({
-    keyword: 'Valentines Day',  startTime: new Date(Date.now() - (31 * 24 * 60 * 60 * 1000)),granularTimeResolution: false})]).then(function(values) {
+    keyword: 'bitcoin',  startTime: new Date(Date.now() - (31 * 24 * 60 * 60 * 1000)),granularTimeResolution: false})]).then(function(values) {
     //console.log(values[1]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
