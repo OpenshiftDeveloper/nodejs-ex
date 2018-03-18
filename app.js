@@ -1,14 +1,6 @@
 angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $http) {
 
-    $http({method: 'GET',
-        url: '/chartmodel',
-        params: {daysBack: 30}
-    }).then(function (response) {
-        chartModel = response.data;
-        $scope.labels = chartModel.labels;
-        $scope.series = chartModel.series;
-        $scope.data = chartModel.data;
-    }, function (error) {});
+    
 
 
     $scope.onClick = function (points, evt) {
@@ -33,4 +25,18 @@ angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $ht
             ]
         }
     };
+
+    $scope.loadChartModel = function (daysBack) {
+        $http({method: 'GET',
+            url: '/chartmodel',
+            params: {daysBack: daysBack}
+        }).then(function (response) {
+            chartModel = response.data;
+            $scope.labels = chartModel.labels;
+            $scope.series = chartModel.series;
+            $scope.data = chartModel.data;
+        }, function (error) {});
+    };
+    
+    $scope.loadChartModel(31);
 });

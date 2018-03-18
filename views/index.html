@@ -214,10 +214,16 @@
         <script src="node_modules/chart.js/dist/Chart.min.js"></script>
         <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
         <script src="app"></script>
-        
+
     </head>
     <body >
+
         <div ng-app="app" ng-controller="LineCtrl">
+            <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                <button ng-click="loadChartModel(7)">week</button>
+                <button ng-click="loadChartModel(31)">month</button>
+                <button ng-click="loadChartModel(250)">max</button>
+            </section>
             <canvas id="line" class="chart chart-line" chart-data="data"
                     chart-labels="labels" chart-series="series" chart-options="options"
                     chart-dataset-override="datasetOverride" chart-click="onClick">
