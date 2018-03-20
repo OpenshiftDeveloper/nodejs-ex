@@ -6,10 +6,21 @@
         <title>Bitcoin Price vs Interest</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"  crossorigin="anonymous">
-        
+
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
         <script src="node_modules/chart.js/dist/Chart.min.js"></script>
         <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
+        
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="node_modules/moment/moment.js"></script>
+        <script src="node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script src="node_modules/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="node_modules/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
+
+
         <script src="app"></script>
 
     </head>
@@ -19,16 +30,16 @@
             <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
                 <button ng-click="loadChartModel(7)">week</button>
                 <button ng-click="loadChartModel(31)">month</button>
-                <button ng-click="loadChartModel(6*31)">six months</button>
-                <button ng-click="loadChartModel(12*31)">year</button>
-                <button ng-click="loadChartModel(5*12*31)">five years</button>
+                <button ng-click="loadChartModel(6 * 31)">six months</button>
+                <button ng-click="loadChartModel(12 * 31)">year</button>
+                <button ng-click="loadChartModel(5 * 12 * 31)">five years</button>
             </section>
             <canvas id="line" class="chart chart-line" chart-data="data"
                     chart-labels="labels" chart-series="series" chart-options="options"
                     chart-dataset-override="datasetOverride" chart-click="onClick">
             </canvas>
         </div>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </body>
