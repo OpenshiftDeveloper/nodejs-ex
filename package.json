@@ -5,6 +5,9 @@
   "main": "server.js",
   "dependencies": {
     "angular-chart.js": "1.1.1",
+    "angular-daterangepicker": "^0.2.3-alpha1",
+    "bootstrap": "^4.0.0",
+    "bootstrap-daterangepicker": "^2.1.30",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
     "chart.js": "^2.7.2",
@@ -12,6 +15,7 @@
     "express": "^4.13.4",
     "google-trends-api": "4.6.1",
     "mocha": "^2.4.5",
+    "moment": "^2.21.0",
     "mongodb": "^2.1.16",
     "morgan": "^1.7.0",
     "node-coindesk-api": "1.0.0",
