@@ -1,4 +1,5 @@
-angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $http) {
+app = angular.module("app", ["chart.js","daterangepicker"]);
+app.controller("LineCtrl", function ($scope, $http) {
 
     
 
@@ -39,4 +40,8 @@ angular.module("app", ["chart.js"]).controller("LineCtrl", function ($scope, $ht
     };
     
     $scope.loadChartModel(31);
+});
+
+app.controller('TestCtrl', function ($scope) {
+    $scope.datePicker.date = {startDate: null, endDate: null};
 });
