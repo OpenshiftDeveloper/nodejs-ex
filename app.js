@@ -43,5 +43,6 @@ app.controller("LineCtrl", function ($scope, $http) {
 });
 
 app.controller('TestCtrl', function ($scope) {
+    $scope.datePicker = new Object();
     $scope.datePicker.date = {startDate: null, endDate: null};
 });
