@@ -108,13 +108,16 @@ app.get('/pagecount', function (req, res) {
 });
 
 app.get('/chartmodel', function (req, res) {
-    var daysBack = req.param('daysBack');
-    startTime = new Date(Date.now() - (daysBack * 24 * 60 * 60 * 1000));
+    console.log(req.param("startTime"));
+    console.log(req.param("endTime"));
+    var startTime = new Date(req.param("startTime"));
+    var endTime = new Date(req.param("endTime"));
+    //startTime = new Date(Date.now() - (daysBack * 24 * 60 * 60 * 1000));
     options = new Object();
     options.start = startTime;
-    options.end = new Date(Date.now());    
+    options.end = endTime;    
      Promise.all([coindesk.getHistoricalClosePrices(options), googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: startTime,granularTimeResolution: true})]).then(function(values) {
+    keyword: 'bitcoin',  startTime: startTime,  endTime: endTime,granularTimeResolution: true})]).then(function(values) {
     //console.log(values[1]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();

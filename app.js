@@ -1,4 +1,4 @@
-app = angular.module("app", ["chart.js","daterangepicker"]);
+app = angular.module("app", ["chart.js","daterangepicker","angularMoment"]);
 app.controller("LineCtrl", function ($scope, $http) {
 
     
@@ -27,10 +27,11 @@ app.controller("LineCtrl", function ($scope, $http) {
         }
     };
 
-    $scope.loadChartModel = function (daysBack) {
+    $scope.loadChartModel = function (startTime, endTime) {
         $http({method: 'GET',
             url: '/chartmodel',
-            params: {daysBack: daysBack}
+            params: {startTime: startTime,
+            endTime:endTime}
         }).then(function (response) {
             chartModel = response.data;
             $scope.labels = chartModel.labels;
@@ -39,10 +40,25 @@ app.controller("LineCtrl", function ($scope, $http) {
         }, function (error) {});
     };
     
-    $scope.loadChartModel(31);
+    
 });
 
-app.controller('TestCtrl', function ($scope) {
+app.controller('TestCtrl', ['$scope', 'moment', function ($scope, moment) {
     $scope.datePicker = new Object();
     $scope.datePicker.date = {startDate: null, endDate: null};
-});
+    $scope.nowDate = moment().toDate();
+    $scope.weekDate = moment().subtract(7, 'days').toDate();
+    $scope.mothDate = moment().subtract(1, 'months').toDate();
+    $scope.halfYearDate = moment().subtract(6, 'months').toDate();
+    $scope.yearDate = moment().subtract(1, 'years').toDate();
+    $scope.year5Date = moment().subtract(5, 'years').toDate();
+    
+    $scope.loadChartModel($scope.mothDate, $scope.nowDate);
+    
+    $scope.datePicker.options = {
+        eventHandlers: {'apply.daterangepicker': function(ev, picker) {$scope.loadChartModel( $scope.datePicker.date.startDate.toDate(),
+                $scope.datePicker.date.endDate.toDate()) }}
+    };
+    
+ }]);
+

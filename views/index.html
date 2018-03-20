@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Bitcoin Price vs Interest</title>
+        <title>Bitcoin Price vs Search Interest</title>
 
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
@@ -19,6 +19,9 @@
         <script src="node_modules/moment/moment.js"></script>
         <script src="node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
         <script src="node_modules/angular-daterangepicker/js/angular-daterangepicker.js"></script>
+        
+        <script src="node_modules/moment/moment.js"></script>
+        <script src="node_modules/angular-moment/angular-moment.js"></script>
 
         
 
@@ -29,15 +32,16 @@
 
         <div ng-app="app" ng-controller="LineCtrl">
             <div ng-controller="TestCtrl">
-                <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date" />
-            </div>
             <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-                <button ng-click="loadChartModel(7)">week</button>
-                <button ng-click="loadChartModel(31)">month</button>
-                <button ng-click="loadChartModel(6 * 31)">six months</button>
-                <button ng-click="loadChartModel(12 * 31)">year</button>
-                <button ng-click="loadChartModel(5 * 12 * 31)">five years</button>
+                <button ng-click="loadChartModel(weekDate, nowDate)">week</button>
+                <button ng-click="loadChartModel(mothDate, nowDate)">month</button>
+                <button ng-click="loadChartModel(halfYearDate, nowDate)">six months</button>
+                <button ng-click="loadChartModel(yearDate, nowDate)">year</button>
+                <button ng-click="loadChartModel(year5Date, nowDate)">five years</button>
+                 <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date"
+                     options="datePicker.options" />
             </section>
+                 </div>
             <canvas id="line" class="chart chart-line" chart-data="data"
                     chart-labels="labels" chart-series="series" chart-options="options"
                     chart-dataset-override="datasetOverride" chart-click="onClick">
