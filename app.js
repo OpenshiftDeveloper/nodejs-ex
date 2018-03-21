@@ -44,21 +44,22 @@ app.controller("LineCtrl", function ($scope, $http) {
 });
 
 app.controller('TestCtrl', ['$scope', 'moment', function ($scope, moment) {
+    
+    $scope.nowDate = moment();
+    $scope.weekDate = moment().subtract(7, 'days');
+    $scope.monthDate = moment().subtract(1, 'months');
+    $scope.halfYearDate = moment().subtract(6, 'months');
+    $scope.yearDate = moment().subtract(1, 'years');
+    $scope.year5Date = moment().subtract(5, 'years');
+    
     $scope.datePicker = new Object();
-    $scope.datePicker.date = {startDate: null, endDate: null};
-    $scope.nowDate = moment().toDate();
-    $scope.weekDate = moment().subtract(7, 'days').toDate();
-    $scope.mothDate = moment().subtract(1, 'months').toDate();
-    $scope.halfYearDate = moment().subtract(6, 'months').toDate();
-    $scope.yearDate = moment().subtract(1, 'years').toDate();
-    $scope.year5Date = moment().subtract(5, 'years').toDate();
-    
-    $scope.loadChartModel($scope.mothDate, $scope.nowDate);
-    
-    $scope.datePicker.options = {
-        eventHandlers: {'apply.daterangepicker': function(ev, picker) {$scope.loadChartModel( $scope.datePicker.date.startDate.toDate(),
-                $scope.datePicker.date.endDate.toDate()) }}
-    };
+    $scope.datePicker.date = {startDate: $scope.monthDate, endDate: $scope.nowDate};
+   
+    $scope.$watchCollection('datePicker', function() {
+        $scope.loadChartModel( $scope.datePicker.date.startDate.toDate(),
+                $scope.datePicker.date.endDate.toDate());
+    }, true);
+
     
  }]);
 
