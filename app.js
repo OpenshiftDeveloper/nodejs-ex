@@ -62,18 +62,13 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
 app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
         $scope.showConfirm = function (ev) {
             // Appending dialog to document.body to cover sidenav in docs app
-            var confirm = $mdDialog.confirm()
+            var confirm = $mdDialog.alert()
                     .title('What do you see on the chart?')
-                    .textContent('All of the banks have agreed to forgive you your debts.')
-                    .ariaLabel('Lucky day')
-                    .targetEvent(ev)
+                    .textContent('The chart shows bitcoin price (USD) compared with how much people search for the term "bitcoin" on google.\n\
+ The bitcoin price is fetched from coindesk.com and the search interest from google trends. The dates are in the UTC time zone.')
                     .ok('Ok')
-
-
-            $mdDialog.show(confirm).then(function () {
-                $scope.status = 'You decided to get rid of your debt.';
-            }, function () {
-                $scope.status = 'You decided to keep your debt.';
+            $mdDialog.show(confirm).then(function () {                
+            }, function () {                
             });
         };
     }]);
