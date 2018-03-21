@@ -1,4 +1,5 @@
-app = angular.module("app", ["chart.js", "daterangepicker", "angularMoment", 'ngMaterial']);
+
+app = angular.module("app", ["chart.js", "daterangepicker", "angularMoment", 'ngMaterial','ui.bootstrap']);
 app.controller("ChartCtrl", function ($scope, $http) {
     $scope.onClick = function (points, evt) {
         console.log(points, evt);

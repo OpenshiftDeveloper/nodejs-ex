@@ -4,9 +4,10 @@
   "description": "Node.js sample app for OpenShift 3",
   "main": "server.js",
   "dependencies": {
+    "angular-bootstrap-npm": "^0.14.3",
     "angular-chart.js": "1.1.1",
     "angular-daterangepicker": "^0.2.3-alpha1",
-    "angular-moment": "^1.2.0",    
+    "angular-moment": "^1.2.0",
     "bootstrap-daterangepicker": "^2.1.30",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",

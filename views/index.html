@@ -19,6 +19,7 @@
         <script src="node_modules/angular-daterangepicker/js/angular-daterangepicker.js"></script>        
         <script src="node_modules/moment/moment.js"></script>
         <script src="node_modules/angular-moment/angular-moment.js"></script>
+        <script src="node_modules/angular-bootstrap-npm/dist/angular-bootstrap.min.js"></script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.min.js"></script>
@@ -27,32 +28,79 @@
         <!-- AngularJS Material Javascript now available via Google CDN; version 1.1.4 used here -->
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.js"></script>
 
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"  crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://blockchain.info/Resources/js/pay-now-button.js"></script>
+
         <script src="app"></script>
 
     </head>
     <body >
 
-        <div ng-app="app" ng-controller="ChartCtrl">
-            <div ng-controller="DateCtrl">
-                <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
-                    <button ng-click="datePicker.date = {startDate: weekDate, endDate: nowDate}">week</button>
-                    <button ng-click="datePicker.date = {startDate: monthDate, endDate: nowDate}">month</button>
-                    <button ng-click="datePicker.date = {startDate: halfYearDate, endDate: nowDate}">six months</button>
-                    <button ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">year</button>
-                    <button ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">five years</button>
-                    <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date"
-                           options="datePicker.options" />
-                    <div ng-controller="InfoCtrl">
-                        <button ng-click="showConfirm()">i</button>
+        <div ng-app="app"  ng-controller="ChartCtrl">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <button ng-click="datePicker.date = {startDate: weekDate, endDate: nowDate}">week</button>
+                        <button ng-click="datePicker.date = {startDate: monthDate, endDate: nowDate}">month</button>
+                        <button ng-click="datePicker.date = {startDate: halfYearDate, endDate: nowDate}">six months</button>
+                        <button ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">year</button>
+                        <button ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">five years</button>
                     </div>
-                </section>
+
+                    <div class="col-sm">
+                        <div ng-controller="DateCtrl">
+                            <input date-range-picker class="date-picker" type="text" ng-model="datePicker.date"
+                                   options="datePicker.options" />
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div ng-controller="InfoCtrl">
+                            <button ng-click="showConfirm()">i</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+
+                        <canvas id="line" class="chart chart-line" chart-data="data"
+                                chart-labels="labels" chart-series="series" chart-options="options"
+                                chart-dataset-override="datasetOverride" chart-click="onClick">
+                        </canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="font-size:16px;margin:0 auto;width:300px" class="blockchain-btn"
+                         data-address="1QGssUyRmYbXhrEueSfWHR7oS1xzuv8PRt"
+                         data-shared="false">
+                        <div class="blockchain stage-begin">
+                            <img src="https://blockchain.info/Resources/buttons/donate_64.png"/>
+                        </div>
+                        <div class="blockchain stage-loading" style="text-align:center">
+                            <img src="https://blockchain.info/Resources/loading-large.gif"/>
+                        </div>
+                        <div class="blockchain stage-ready">
+                            <p align="center">Please Donate To Bitcoin Address: <b>[[address]]</b></p>
+                            <p align="center" class="qr-code"></p>
+                        </div>
+                        <div class="blockchain stage-paid">
+                            Donation of <b>[[value]] BTC</b> Received. Thank You.
+                        </div>
+                        <div class="blockchain stage-error">
+                            <font color="red">[[error]]</font>
+                        </div>
+                    </div>
+
+                </div>
+
+
             </div>
-            <canvas id="line" class="chart chart-line" chart-data="data"
-                    chart-labels="labels" chart-series="series" chart-options="options"
-                    chart-dataset-override="datasetOverride" chart-click="onClick">
-            </canvas>
+
+
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>      
+
+
     </body>
 </html>

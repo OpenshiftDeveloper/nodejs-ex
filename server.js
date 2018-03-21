@@ -18,6 +18,7 @@ var ChartModelProducer = require("./chartModelProducer.js");
 app.engine('html', require('ejs').renderFile);
 
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use('/resources', express.static(__dirname + '/resources'));
 app.use('/app', express.static(__dirname + '/app.js'));
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
