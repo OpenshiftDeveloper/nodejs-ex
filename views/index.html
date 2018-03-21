@@ -53,14 +53,15 @@
                         <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">year</button>
                         <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">five years</button>
                     </div>
-                    <div class="col-sm-2" style="background-color:lavenderblush;">
+                    
+                    <div class="col-sm-2">
                         <div ng-controller="DateCtrl">
                             <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date"
                                    options="datePicker.options" />
                         </div>
                     </div>
 
-                    <div class="col-sm-1" style="background-color:lavenderblush;">
+                    <div class="col-sm-2">
 
                         <div ng-controller="InfoCtrl">
                             <button ng-click="showConfirm()" type="button" class="btn btn-default btn-sm">
@@ -69,7 +70,7 @@
 
                         </div>
                     </div>
-                    <div class="col-sm-5"><h5 class="text-info">Bitcoin Price vs. Search Interest</h5>
+<div class="col-sm-2"><h4 class="text-info">Bitcoin Price vs. Search Interest</h4>
                     </div>
                 </div>
                 <div class="row">
