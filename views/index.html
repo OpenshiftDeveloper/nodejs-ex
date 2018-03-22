@@ -13,7 +13,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
         <script src="node_modules/chart.js/dist/Chart.min.js"></script>
         <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="node_modules/moment/moment.js"></script>
         <script src="node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
         <script src="node_modules/angular-daterangepicker/js/angular-daterangepicker.js"></script>        
@@ -44,11 +44,11 @@
                 <div class="row">
                     <div ng-controller="DateCtrl">
                         <div class="col-sm-3" >
-                            <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: weekDate, endDate: nowDate}">week</button>
-                            <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: monthDate, endDate: nowDate}">month</button>
-                            <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: halfYearDate, endDate: nowDate}">six months</button>
-                            <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">year</button>
-                            <button class="btn btn-default btn-sm" ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">five years</button>
+                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: weekDate, endDate: nowDate}">week</button>
+                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: monthDate, endDate: nowDate}">month</button>
+                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: halfYearDate, endDate: nowDate}">six months</button>
+                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">year</button>
+                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">five years</button>
                         </div>
                         <div class="col-sm-2">
                             <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date"
@@ -59,7 +59,7 @@
                     <div class="col-sm-2">
 
                         <div ng-controller="InfoCtrl">
-                            <button ng-click="showConfirm()" type="button" class="btn btn-default btn-sm">
+                            <button ng-click="showConfirm()" type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-info-sign"></span> Info
                             </button>
 
