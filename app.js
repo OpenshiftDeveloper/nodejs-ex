@@ -52,7 +52,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.year5Date = moment().subtract(5, 'years');
 
         $scope.datePicker = new Object();
-        $scope.datePicker.date = {startDate: $scope.monthDate, endDate: $scope.nowDate};
+        $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
 
         $scope.$watchCollection('datePicker', function () {
             $scope.loadChartModel($scope.datePicker.date.startDate.toDate(),
