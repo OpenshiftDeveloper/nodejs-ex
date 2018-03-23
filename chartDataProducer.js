@@ -37,14 +37,15 @@ method.getValueFromAdjustedDataByBaseDataTime = function (baseDataTime, adjusted
         console.log("nextTick.time "+nextTick.time+" "+nextTick.value +" "+baseDataTime+" "+cursor.position);
         while (nextTick.time <= baseDataTime) {
            // console.log(nextTick.time);            
+            cursor.position++;
             if (cursor.position >= adjustedData.length-1) {
                 break;
             }
-            cursor.position++;
+            
             
            resultValue = nextTick.value;
            console.log("resultValue "+resultValue);
-           nextTick = adjustedData[cursor.position];
+           nextTick = adjustedData[cursor.position+1];
         }
     }
     console.log(resultValue);

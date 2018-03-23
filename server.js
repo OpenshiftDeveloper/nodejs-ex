@@ -131,7 +131,7 @@ app.get('/chartmodel', function (req, res) {
     console.log(normalizedGoogleTrends);
    
     
-    chartModel = chartModelProducer.getChartModel(normalizedCoinDesk, normalizedGoogleTrends);
+    chartModel = chartModelProducer.getChartModel(normalizedGoogleTrends, normalizedCoinDesk);
     res.send(chartModel);
 });
 });
