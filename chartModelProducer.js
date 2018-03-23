@@ -11,7 +11,7 @@ method.getChartModel = function (baseData, adjustedData) {
     chartModel = new Object();
     var chartDataProducer = new ChartDataProducer();
     chartData = chartDataProducer.getChartData(baseData, adjustedData);
-    console.log(chartData);
+    //console.log(chartData);
     chartModel.data = chartData;
     chartModel.series = ['Bitcoin Price', 'Bitcoin Interest'];
     chartModel.labels = getTimeLabels(baseData);
