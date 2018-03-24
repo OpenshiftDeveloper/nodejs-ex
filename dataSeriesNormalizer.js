@@ -14,11 +14,14 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     longTimelineData = JSON.parse(data).default.timelineData;
     weekTimelineData = JSON.parse(lastWeekData).default.timelineData;
     normalizedLongData = normalizeGoogleTrendsTimeline(longTimelineData);
-    normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);
-    normalizedWeekData = getDailyTimeline(normalizedWeekData);
+    normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);    
+    var duration = moment.duration(normalizedLongData[0].time.diff(normalizedLongData[1].time));
+    if(duration.asHours()>20){
+        normalizedWeekData = getDailyTimeline(normalizedWeekData);
+    };
    //  console.log(normalizedLongData);
-     console.log(lastWeekData);
-     console.log(normalizedWeekData);
+    // console.log(lastWeekData);
+    // console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
     //console.log(connectedData);
