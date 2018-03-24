@@ -92,7 +92,7 @@ getDailyTimeline = function (hourlyTimeline) {
     dailyTimelinePos = 0;
     for (var i in hourlyTimeline) {
         tick = hourlyTimeline[i];
-        //console.log("tick.time " +  tick.time+" "+tick.time.clone().startOf('day') );
+        console.log("tick.time " +  tick.time+" "+tick.time.clone().startOf('day') );
         if(tick.time.isSame(tick.time.clone().startOf('day'))){
            // console.log("tick.time equals " +  tick.time+" "+tick.time.clone().startOf('day') );
            dailyTimeline[dailyTimelinePos] =tick;
