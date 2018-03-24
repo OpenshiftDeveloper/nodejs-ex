@@ -69,12 +69,12 @@ getConnectedTimelines = function (longData, weekData) {
         weekTick = weekData[i];
         if (weekTick.time>=tick.time) {
             correctionRatio =tick.value[0]/ weekTick.value[0];
-           //console.log("weekTick.time " +  weekTick.time+" "+i+" "+correctionRatio );
+           console.log("weekTick.time " +  weekTick.time+" "+i+" "+correctionRatio );
            weekDataStartPos  = i;
            break;
         }
     }
-    weekDataStartPos++;
+    weekDataStartPos++;    
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
     //console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
     for (i = longData.length; i < connectedData.length; i++) { 
