@@ -118,7 +118,7 @@ method.normalizeCoinDesk = function (data, currentPrice) {
         i++;
     }
     tick = new Object();
-    tick.time = moment.utc(currentPrice.time.updatedISO);
+    tick.time = moment.utc().startOf('day');
     tick.value = currentPrice.bpi.USD.rate_float;
     normalizedTrends[normalizedTrends.length-1] = tick;
     console.log(normalizedTrends);

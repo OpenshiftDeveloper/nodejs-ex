@@ -21,7 +21,7 @@ method.getChartData = function (baseData, adjustedData) {
         //console.log(baseData[i]);
     }
     //actual price
-    chartData[0][chartData[0].length-1] = adjustedData[adjustedData.length-1].value;
+    //chartData[0][chartData[0].length-1] = adjustedData[adjustedData.length-1].value;
     //console.log("chartData[1][chartData.length-1] "+adjustedData[adjustedData.length-1].value);
     //console.log("chartData[1][chartData.length-1] "+chartData);
     return chartData;
