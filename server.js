@@ -110,6 +110,7 @@ app.get('/pagecount', function (req, res) {
 });
 
 app.get('/chartmodel', function (req, res) {
+    weekAgoTime = moment.utc().subtract(7, 'days').toDate();
     console.log(req.param("startTime"));
     console.log(req.param("endTime"));
     var startTime = moment.utc(req.param("startTime")).toDate();
@@ -120,14 +121,18 @@ app.get('/chartmodel', function (req, res) {
     options = new Object();
     options.start = startTime;
     options.end = endTime;    
-     Promise.all([coindesk.getHistoricalClosePrices(options), googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: startTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})]).then(function(values) {
+     Promise.all([coindesk.getHistoricalClosePrices(options),
+         googleTrends.interestOverTime({
+    keyword: 'bitcoin',  startTime: startTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})
+    ,    googleTrends.interestOverTime({
+    keyword: 'bitcoin',  startTime: weekAgoTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})
+    ]).then(function(values) {
     console.log(values[0]);
     console.log(values[1]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    
-    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]); 
+    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1],values[2]);     
     //console.log(normalizedCoinDesk);
     //console.log(normalizedGoogleTrends);
    

@@ -8,11 +8,25 @@ function DataSeriesNormalizer(age) {
     this._age = age;
 }
 
-method.normalizeGoogleTrends = function (data) {
+method.normalizeGoogleTrends = function (data, lastWeekData) {
 
-    results = JSON.parse(data);
-    timelineData = results.default.timelineData;
-    normalizedTrends = [timelineData.length];
+    
+    longTimelineData = JSON.parse(data).default.timelineData;
+    weekTimelineData = JSON.parse(lastWeekData).default.timelineData;
+    normalizedLongData = normalizeGoogleTrendsTimeline(longTimelineData);
+    normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);
+   //  console.log(normalizedLongData);
+     console.log(lastWeekData);
+     console.log(normalizedWeekData);
+    connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
+    //console.log(normalizedTrends.length);
+    console.log(connectedData);
+    return connectedData;
+};
+
+
+normalizeGoogleTrendsTimeline = function (timelineData) {
+    normalizedData = [timelineData.length];
     for (var i in timelineData) {
         tick = new Object();
         // console.log(timelineData[i]);
@@ -31,11 +45,30 @@ method.normalizeGoogleTrends = function (data) {
         }
         //console.log("tick.time " +  tick.time.format('ll'));
         tick.value = timelineData[i].value;
-        normalizedTrends[i] = tick;
+        normalizedData[i] = tick;
     }
     //console.log(normalizedTrends.length);
-    return normalizedTrends;
+    return normalizedData;
 };
+
+getConnectedTimelines = function (longData, weekData) {
+    tick = longData[longData.length-1];
+    var weekDataStartPos;
+    for (var i in weekData) {
+        weekTick = weekData[i];
+        if (weekTick.time>=tick.time) {
+           console.log("weekTick.time " +  weekTick.time+" "+i );
+           weekDataStartPos  = i;
+           break;
+        }
+    }
+    
+    connectedData = longData.concat(weekData.slice(weekDataStartPos));
+    console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
+    return connectedData;
+}
+
+
 
 method.normalizeCoinDesk = function (data) {
     results = data;
