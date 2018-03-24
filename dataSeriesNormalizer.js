@@ -2,7 +2,7 @@ var method = DataSeriesNormalizer.prototype;
 
 const googleTrends = require('google-trends-api');
 const coindesk = require('node-coindesk-api');
-
+var moment = require('moment');
 
 function DataSeriesNormalizer(age) {
     this._age = age;
@@ -18,14 +18,16 @@ method.normalizeGoogleTrends = function (data) {
         // console.log(timelineData[i]);
         //console.log(timelineData[i].formattedTime);
         //console.log(timelineData[i].formattedAxisTime);
-        tick.time = new Date(timelineData[i].formattedTime);
-        var moment = require('moment');
-       // console.log("tick.time " + tick.time + " " + moment(timelineData[i].formattedAxisTime, "MMM d dd at hh:mm A"));
-        if (isNaN(tick.time.getTime())) {
-            tick.time = new Date(timelineData[i].formattedAxisTime);
+        
+        tick.time = moment.utc(timelineData[i].formattedTime, 'll', true);
+        
+        //console.log("tick.time " +  tick.time.format('ll') + " " + moment(timelineData[i].formattedAxisTime, "MMM d dd at hh:mm A"));
+        if (isNaN(tick.time)) {
+            //console.log("tick.time " + tick.time.format('ll') + " " + moment(timelineData[i].formattedAxisTime, "MMM d dd at hh:mm A"));
+            tick.time = moment.utc(timelineData[i].formattedAxisTime, 'll', true);
         }
-        if (isNaN(tick.time.getTime())) {
-            tick.time = moment(timelineData[i].formattedTime, 'lll').toDate();
+        if (isNaN(tick.time)) {
+            tick.time = moment.utc(timelineData[i].formattedTime, 'lll');
         }
 
         tick.value = timelineData[i].value;
@@ -42,7 +44,7 @@ method.normalizeCoinDesk = function (data) {
     i = 0;
     for (var time in timelineData) {
         tick = new Object();
-        tick.time = new Date(time);
+        tick.time = moment.utc(time);
         tick.value = timelineData[time];
         normalizedTrends[i] = tick;
         i++;

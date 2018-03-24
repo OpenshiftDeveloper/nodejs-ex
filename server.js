@@ -5,6 +5,7 @@ var express = require('express'),
     
 Object.assign=require('object-assign')
 
+var moment = require('moment');
 const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
@@ -111,8 +112,8 @@ app.get('/pagecount', function (req, res) {
 app.get('/chartmodel', function (req, res) {
     console.log(req.param("startTime"));
     console.log(req.param("endTime"));
-    var startTime = new Date(req.param("startTime"));
-    var endTime = new Date(req.param("endTime"));
+    var startTime = moment.utc(req.param("startTime")).toDate();
+    var endTime = moment.utc(req.param("endTime")).toDate();
     console.log(startTime);
     console.log(endTime);
     //startTime = new Date(Date.now() - (daysBack * 24 * 60 * 60 * 1000));
@@ -131,7 +132,7 @@ app.get('/chartmodel', function (req, res) {
     console.log(normalizedGoogleTrends);
    
     
-    chartModel = chartModelProducer.getChartModel(normalizedCoinDesk,normalizedGoogleTrends);
+    chartModel = chartModelProducer.getChartModel(normalizedGoogleTrends, normalizedCoinDesk);
     res.send(chartModel);
 });
 });
