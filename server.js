@@ -125,14 +125,16 @@ app.get('/chartmodel', function (req, res) {
          googleTrends.interestOverTime({
     keyword: 'bitcoin',  startTime: startTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})
     ,    googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: weekAgoTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})
+    keyword: 'bitcoin',  startTime: weekAgoTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"}),
+coindesk.getCurrentPrice()
     ]).then(function(values) {
     console.log(values[0]);
     console.log(values[1]);
     console.log(values[2]);
+    console.log(values[3]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
-    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    
+    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0],values[3]);    
     normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1],values[2]);     
     //console.log(normalizedCoinDesk);
     //console.log(normalizedGoogleTrends);

@@ -20,12 +20,15 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     if(duration.asHours()>20){
         normalizedWeekData = getDailyTimeline(normalizedWeekData);
     };
-     console.log(normalizedLongData);
+    // console.log(normalizedLongData);
     // console.log(lastWeekData);
-     console.log(normalizedWeekData);
+    // console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
-    console.log(connectedData);
+    for (var i in connectedData) {
+        console.log(connectedData[i]);
+    }
+    
     return connectedData;
 };
 
@@ -34,7 +37,7 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
     normalizedData = [timelineData.length];
     for (var i in timelineData) {
         tick = new Object();
-        // console.log(timelineData[i]);
+         
         //console.log(timelineData[i].formattedTime);
         //console.log(timelineData[i].formattedAxisTime);
         
@@ -51,6 +54,8 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
         //console.log("tick.time " +  tick.time.format('ll'));
         tick.value = timelineData[i].value;
         normalizedData[i] = tick;
+        //console.log(normalizedData[i]);
+       // console.log(i);
     }
     //console.log(normalizedTrends.length);
     return normalizedData;
@@ -64,16 +69,16 @@ getConnectedTimelines = function (longData, weekData) {
         weekTick = weekData[i];
         if (weekTick.time>=tick.time) {
             correctionRatio =tick.value[0]/ weekTick.value[0];
-           console.log("weekTick.time " +  weekTick.time+" "+i+" "+correctionRatio );
+           //console.log("weekTick.time " +  weekTick.time+" "+i+" "+correctionRatio );
            weekDataStartPos  = i;
            break;
         }
     }
     weekDataStartPos++;
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
-    console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
+    //console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
     for (i = longData.length; i < connectedData.length; i++) { 
-           console.log(parseInt(connectedData[i].value)+" "+correctionRatio+" "+(parseInt(connectedData[i].value) * correctionRatio));
+           //console.log(parseInt(connectedData[i].value)+" "+correctionRatio+" "+(parseInt(connectedData[i].value) * correctionRatio));
         connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * correctionRatio);
         
      
@@ -100,10 +105,10 @@ getDailyTimeline = function (hourlyTimeline) {
 
 
 
-method.normalizeCoinDesk = function (data) {
+method.normalizeCoinDesk = function (data, currentPrice) {
     results = data;
     timelineData = results.bpi;
-    normalizedTrends = [Object.keys(timelineData).length];
+    normalizedTrends = [Object.keys(timelineData).length+1];
     i = 0;
     for (var time in timelineData) {
         tick = new Object();
@@ -112,6 +117,11 @@ method.normalizeCoinDesk = function (data) {
         normalizedTrends[i] = tick;
         i++;
     }
+    tick = new Object();
+    tick.time = moment.utc(currentPrice.time.updatedISO);
+    tick.value = currentPrice.bpi.USD.rate_float;
+    normalizedTrends[normalizedTrends.length-1] = tick;
+    console.log(normalizedTrends);
     return normalizedTrends;
 };
 

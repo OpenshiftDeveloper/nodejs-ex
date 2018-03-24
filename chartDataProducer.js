@@ -20,7 +20,9 @@ method.getChartData = function (baseData, adjustedData) {
         chartData[1][i] = method.getValueFromAdjustedDataByBaseDataTime(tick.time,adjustedData,cursor);        
         //console.log(baseData[i]);
     }
-    //console.log(chartData);
+    chartData[1][chartData[1].length-1] = adjustedData[adjustedData.length-1].value;
+    console.log("chartData[1][chartData.length-1] "+adjustedData[adjustedData.length-1].value);
+    console.log("chartData[1][chartData.length-1] "+chartData);
     return chartData;
 };
 
