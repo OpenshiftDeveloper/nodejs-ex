@@ -110,7 +110,7 @@ app.get('/pagecount', function (req, res) {
 });
 
 app.get('/chartmodel', function (req, res) {
-    weekAgoTime = moment.utc().subtract(7, 'days').toDate();
+    weekAgoTime = moment.utc().subtract(5, 'days').toDate();
     console.log(req.param("startTime"));
     console.log(req.param("endTime"));
     var startTime = moment.utc(req.param("startTime")).toDate();
@@ -129,6 +129,7 @@ app.get('/chartmodel', function (req, res) {
     ]).then(function(values) {
     console.log(values[0]);
     console.log(values[1]);
+    console.log(values[2]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    

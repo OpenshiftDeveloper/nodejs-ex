@@ -44,15 +44,15 @@ app.controller("ChartCtrl", function ($scope, $http) {
 
 app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
 
-        $scope.nowDate = moment().utc();
+        $scope.nowDate = moment().utc().endOf('day');
         $scope.latestDate = moment().utc().subtract(1, 'days');
         
-        $scope.weekDate = $scope.latestDate.clone().subtract(7, 'days');
-        $scope.monthDate = $scope.latestDate.clone().subtract(1, 'months');
-        $scope.halfYearDate = $scope.latestDate.clone().subtract(6, 'months');
-        $scope.yearDate = $scope.latestDate.clone().subtract(1, 'years');
-        $scope.year2Date = $scope.latestDate.clone().subtract(2, 'years');
-        $scope.year5Date = $scope.latestDate.clone().subtract(5, 'years');        
+        $scope.weekDate = $scope.nowDate.clone().subtract(6, 'days');
+        $scope.monthDate = $scope.nowDate.clone().subtract(1, 'months');
+        $scope.halfYearDate = $scope.nowDate.clone().subtract(6, 'months');
+        $scope.yearDate = $scope.nowDate.clone().subtract(1, 'years');
+        $scope.year2Date = $scope.nowDate.clone().subtract(2, 'years');
+        $scope.year5Date = $scope.nowDate.clone().subtract(5, 'years');        
         //$scope.earliestDate = moment("2010-07-17").endOf('day').utc();
         $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc();
 
@@ -60,7 +60,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
 
         $scope.$watchCollection('datePicker', function () {
-            $scope.loadChartModel($scope.datePicker.date.startDate.utc().startOf('day').toDate(),
+            $scope.loadChartModel($scope.datePicker.date.startDate.utc().endOf('day').toDate(),
                     $scope.datePicker.date.endDate.utc().endOf('day').toDate());
         }, true);
     }]);

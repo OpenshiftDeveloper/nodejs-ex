@@ -15,16 +15,17 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     weekTimelineData = JSON.parse(lastWeekData).default.timelineData;
     normalizedLongData = normalizeGoogleTrendsTimeline(longTimelineData);
     normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);    
-    var duration = moment.duration(normalizedLongData[0].time.diff(normalizedLongData[1].time));
+    var duration = moment.duration(normalizedLongData[1].time.diff(normalizedLongData[0].time));
+    console.log(duration.asHours()+" duration.asHours()");
     if(duration.asHours()>20){
         normalizedWeekData = getDailyTimeline(normalizedWeekData);
     };
-   //  console.log(normalizedLongData);
+     console.log(normalizedLongData);
     // console.log(lastWeekData);
-    // console.log(normalizedWeekData);
+     console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
-    //console.log(connectedData);
+    console.log(connectedData);
     return connectedData;
 };
 
@@ -58,17 +59,26 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
 getConnectedTimelines = function (longData, weekData) {
     tick = longData[longData.length-1];
     var weekDataStartPos;
+    var correctionRatio=1; 
     for (var i in weekData) {
         weekTick = weekData[i];
         if (weekTick.time>=tick.time) {
-           console.log("weekTick.time " +  weekTick.time+" "+i );
+            correctionRatio =tick.value[0]/ weekTick.value[0];
+           console.log("weekTick.time " +  weekTick.time+" "+i+" "+correctionRatio );
            weekDataStartPos  = i;
            break;
         }
     }
-    
+    weekDataStartPos++;
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
     console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
+    for (i = longData.length; i < connectedData.length; i++) { 
+           console.log(parseInt(connectedData[i].value)+" "+correctionRatio+" "+(parseInt(connectedData[i].value) * correctionRatio));
+        connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * correctionRatio);
+        
+     
+    }
+    
     return connectedData;
 }
 
