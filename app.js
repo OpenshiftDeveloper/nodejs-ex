@@ -61,7 +61,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
 
         $scope.$watchCollection('datePicker', function () {
             $scope.loadChartModel($scope.datePicker.date.startDate.utc().endOf('day').toDate(),
-                    $scope.datePicker.date.endDate.utc().endOf('day').toDate());
+                    $scope.datePicker.date.endDate.utc().startOf('day').toDate());
         }, true);
     }]);
 
