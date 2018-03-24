@@ -128,8 +128,8 @@ app.get('/chartmodel', function (req, res) {
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0]);    
     normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1]); 
-    console.log(normalizedCoinDesk);
-    console.log(normalizedGoogleTrends);
+    //console.log(normalizedCoinDesk);
+    //console.log(normalizedGoogleTrends);
    
     
     chartModel = chartModelProducer.getChartModel(normalizedGoogleTrends, normalizedCoinDesk);
