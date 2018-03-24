@@ -53,7 +53,8 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.yearDate = $scope.latestDate.clone().subtract(1, 'years');
         $scope.year2Date = $scope.latestDate.clone().subtract(2, 'years');
         $scope.year5Date = $scope.latestDate.clone().subtract(5, 'years');        
-        $scope.earliestDate = moment("2010-07-17").endOf('day').utc();
+        //$scope.earliestDate = moment("2010-07-17").endOf('day').utc();
+        $scope.earliestDate = moment("2015-01-01").endOf('day').utc();
 
         $scope.datePicker = new Object();
         $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
