@@ -44,7 +44,7 @@ app.controller("ChartCtrl", function ($scope, $http) {
 
 app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
 
-        $scope.nowDate = moment().utc().endOf('day');
+        $scope.nowDate = moment().utc().startOf('day');
         $scope.latestDate = moment().utc().subtract(1, 'days');
         
         $scope.weekDate = $scope.nowDate.clone().subtract(6, 'days');
@@ -60,7 +60,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
 
         $scope.$watchCollection('datePicker', function () {
-            $scope.loadChartModel($scope.datePicker.date.startDate.utc().endOf('day').toDate(),
+            $scope.loadChartModel($scope.datePicker.date.startDate.utc().startOf('day').toDate(),
                     $scope.datePicker.date.endDate.utc().endOf('day').toDate());
         }, true);
     }]);
