@@ -15,12 +15,13 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     weekTimelineData = JSON.parse(lastWeekData).default.timelineData;
     normalizedLongData = normalizeGoogleTrendsTimeline(longTimelineData);
     normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);
+    normalizedWeekData = getDailyTimeline(normalizedWeekData);
    //  console.log(normalizedLongData);
      console.log(lastWeekData);
      console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
-    console.log(connectedData);
+    //console.log(connectedData);
     return connectedData;
 };
 
@@ -66,6 +67,22 @@ getConnectedTimelines = function (longData, weekData) {
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
     console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
     return connectedData;
+}
+
+getDailyTimeline = function (hourlyTimeline) {
+    dailyTimeline = [hourlyTimeline.length];
+    dailyTimelinePos = 0;
+    for (var i in hourlyTimeline) {
+        tick = hourlyTimeline[i];
+        //console.log("tick.time " +  tick.time+" "+tick.time.clone().startOf('day') );
+        if(tick.time.isSame(tick.time.clone().startOf('day'))){
+           // console.log("tick.time equals " +  tick.time+" "+tick.time.clone().startOf('day') );
+           dailyTimeline[dailyTimelinePos] =tick;
+           dailyTimelinePos++;
+        }
+        dailyTimeline = dailyTimeline.slice(0,dailyTimelinePos);
+    }
+    return dailyTimeline;
 }
 
 
