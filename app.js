@@ -45,7 +45,7 @@ app.controller("ChartCtrl", function ($scope, $http) {
 app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
 
         $scope.nowDate = moment().utc();
-        $scope.latestDate = moment().subtract(1, 'days');
+        $scope.latestDate = moment().utc().subtract(1, 'days');
         
         $scope.weekDate = $scope.latestDate.clone().subtract(7, 'days');
         $scope.monthDate = $scope.latestDate.clone().subtract(1, 'months');
@@ -54,7 +54,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.year2Date = $scope.latestDate.clone().subtract(2, 'years');
         $scope.year5Date = $scope.latestDate.clone().subtract(5, 'years');        
         //$scope.earliestDate = moment("2010-07-17").endOf('day').utc();
-        $scope.earliestDate = moment("2015-01-01").endOf('day').utc();
+        $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc();
 
         $scope.datePicker = new Object();
         $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
