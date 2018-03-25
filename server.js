@@ -103,9 +103,7 @@ app.get('/cronjob_69637.html', function (req, res) {
     initDb(function(err){});
   }
   if (db) {
-    db.collection('counts').count(function(err, count ){
-      res.send('{ pageCount: ' + count + '}');
-    });
+    res.send('cronjob.de');
   } else {
     res.send('cronjob.de');
   }
