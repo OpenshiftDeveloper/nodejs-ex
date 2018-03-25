@@ -59,9 +59,12 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.datePicker = new Object();
         $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
 
-        $scope.$watchCollection('datePicker', function () {
-            $scope.loadChartModel($scope.datePicker.date.startDate.utc().startOf('day').toDate(),
-                    $scope.datePicker.date.endDate.utc().endOf('day').toDate());
+        $scope.$watchCollection('datePicker', function () {            
+           $scope.datePicker.date.startDate.add(moment().utcOffset(),"minutes").utc().startOf('day');;
+           $scope.datePicker.date.endDate.endOf('day');
+            
+            $scope.loadChartModel($scope.datePicker.date.startDate.toDate(),
+                    $scope.datePicker.date.endDate.toDate());
         }, true);
     }]);
 
