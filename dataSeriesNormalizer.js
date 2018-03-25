@@ -25,9 +25,7 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     // console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
-   /* for (var i in connectedData) {
-        console.log(connectedData[i]);
-    }*/
+   
     
     return connectedData;
 };
@@ -74,9 +72,14 @@ getConnectedTimelines = function (longData, weekData) {
            break;
         }
     }
-    //console.log(weekData);
+    for (var i in weekData) {
+        console.log(weekData[i]);
+    }    
     weekDataStartPos++;    
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
+    for (var i in connectedData) {
+        console.log(connectedData[i]);
+    }
     //console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
     for (i = longData.length; i < connectedData.length; i++) { 
            //console.log(parseInt(connectedData[i].value)+" "+correctionRatio+" "+(parseInt(connectedData[i].value) * correctionRatio));
@@ -109,21 +112,24 @@ getDailyTimeline = function (hourlyTimeline) {
 method.normalizeCoinDesk = function (data, currentPrice) {
     results = data;
     timelineData = results.bpi;
-    normalizedTrends = [Object.keys(timelineData).length+1];
+    normalizedTimeline = [];
+    console.log(Object.keys(timelineData).length+" sek "+normalizedTimeline.length);
     i = 0;
     for (var time in timelineData) {
         tick = new Object();
         tick.time = moment.utc(time);
         tick.value = timelineData[time];
-        normalizedTrends[i] = tick;
+        normalizedTimeline[i] = tick;
         i++;
     }
     tick = new Object();
     tick.time = moment.utc().startOf('day');
     tick.value = currentPrice.bpi.USD.rate_float;
-    normalizedTrends[normalizedTrends.length-1] = tick;
-    //console.log(normalizedTrends);
-    return normalizedTrends;
+    console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
+    normalizedTimeline[normalizedTimeline.length] = tick;
+    console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
+    console.log(normalizedTimeline);
+    return normalizedTimeline;
 };
 
 
