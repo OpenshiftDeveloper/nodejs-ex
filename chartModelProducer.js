@@ -36,16 +36,13 @@ coindesk.getCurrentPrice()
   })
 }
 
-getChartModelFromNormalizedTimelines = function (baseData, adjustedData) {
-    //console.log(adjustedData.length);
+getChartModelFromNormalizedTimelines = function (baseData, adjustedData) {    
     chartModel = new Object();
     var chartDataProducer = new ChartDataProducer();
-    chartData = chartDataProducer.getChartData(baseData, adjustedData);
-    //console.log(chartData);
+    chartData = chartDataProducer.getChartData(baseData, adjustedData);    
     chartModel.data = chartData;
     chartModel.series = ['Bitcoin Price', 'Bitcoin Interest'];
-    chartModel.labels = getTimeLabels(baseData);
-     
+    chartModel.labels = getTimeLabels(baseData);     
     return chartModel;
 };
 
