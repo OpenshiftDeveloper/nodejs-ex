@@ -56,7 +56,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc();
 
         $scope.datePicker = new Object();
-        $scope.datePicker.date = {startDate: $scope.weekDate, endDate: $scope.nowDate};
+        $scope.datePicker.date = {startDate: $scope.monthDate, endDate: $scope.nowDate};
 
         $scope.$watchCollection('datePicker', function () {
             $scope.datePicker.date.startDate.add(moment().utcOffset(), "minutes").utc().startOf('day');            
