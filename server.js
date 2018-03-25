@@ -5,16 +5,7 @@ var express = require('express'),
     
 Object.assign=require('object-assign')
 
-var moment = require('moment');
-const coindesk = require('node-coindesk-api');
-const googleTrends = require('google-trends-api');
-
-var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
 var ChartModelProducer = require("./chartModelProducer.js");
-
-
-
-
 
 app.engine('html', require('ejs').renderFile);
 
@@ -94,19 +85,8 @@ app.get('/', function (req, res) {
   }
 });
 
-
-
-app.get('/cronjob_69637.html', function (req, res) {
-  // try to initialize the db on every request if it's not already
-  // initialized.
-  if (!db) {
-    initDb(function(err){});
-  }
-  if (db) {
-    res.send('cronjob.de');
-  } else {
-    res.send('cronjob.de');
-  }
+app.get('/cronjob_69637.html', function (req, res) { 
+    res.send('cronjob.de'); 
 });
 
 app.get('/pagecount', function (req, res) {
@@ -124,43 +104,16 @@ app.get('/pagecount', function (req, res) {
   }
 });
 
-app.get('/chartmodel', function (req, res) {
+app.get('/chartmodel', function (req, res) {   
+    //console.log(req.param("startTime"));
+    //console.log(req.param("endTime"));
+    var startTimeParam = req.param("startTime");
+    var endTimeParam = req.param("endTime");
     
-    console.log(req.param("startTime"));
-    console.log(req.param("endTime"));
-    var startTime = moment.utc(req.param("startTime")).toDate();
-    var endTimeMoment = moment.utc(req.param("endTime"));
-    var endTime = endTimeMoment.toDate();
-    weekAgoTime = endTimeMoment.clone().subtract(5, 'days').toDate();
-    console.log(startTime);
-    console.log(endTime);
-    console.log(weekAgoTime);
-    //startTime = new Date(Date.now() - (daysBack * 24 * 60 * 60 * 1000));
-    options = new Object();
-    options.start = startTime;
-    options.end = endTime;    
-     Promise.all([coindesk.getHistoricalClosePrices(options),
-         googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: startTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"})
-    ,    googleTrends.interestOverTime({
-    keyword: 'bitcoin',  startTime: weekAgoTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"}),
-coindesk.getCurrentPrice()
-    ]).then(function(values) {
-    //console.log(values[0]);
-    console.log(values[1]);
-    console.log(values[2]);
-    //console.log(values[3]);
     var chartModelProducer = new ChartModelProducer();
-    var dataSeriesNormalizer = new DataSeriesNormalizer();
-    normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0],values[3]);    
-    normalizedGoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1],values[2]);     
-    //console.log(normalizedCoinDesk);
-    //console.log(normalizedGoogleTrends);
-   
-    
-    chartModel = chartModelProducer.getChartModel(normalizedGoogleTrends, normalizedCoinDesk);
-    res.send(chartModel);
-});
+    chartModelProducer.getChartModel(startTimeParam, endTimeParam).then(function(chartModel) {
+        res.send(chartModel);
+    }); 
 });
 
 // error handling
