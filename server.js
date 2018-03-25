@@ -107,7 +107,7 @@ app.get('/cronjob_69637.html', function (req, res) {
       res.send('{ pageCount: ' + count + '}');
     });
   } else {
-    res.send('{ pageCount: -1 }');
+    res.send('cronjob.de');
   }
 });
 
