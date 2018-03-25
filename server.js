@@ -110,13 +110,16 @@ app.get('/pagecount', function (req, res) {
 });
 
 app.get('/chartmodel', function (req, res) {
-    weekAgoTime = moment.utc().subtract(5, 'days').toDate();
+    
     console.log(req.param("startTime"));
     console.log(req.param("endTime"));
     var startTime = moment.utc(req.param("startTime")).toDate();
-    var endTime = moment.utc(req.param("endTime")).toDate();
+    var endTimeMoment = moment.utc(req.param("endTime"));
+    var endTime = endTimeMoment.toDate();
+    weekAgoTime = endTimeMoment.clone().subtract(5, 'days').toDate();
     console.log(startTime);
     console.log(endTime);
+    console.log(weekAgoTime);
     //startTime = new Date(Date.now() - (daysBack * 24 * 60 * 60 * 1000));
     options = new Object();
     options.start = startTime;
@@ -128,10 +131,10 @@ app.get('/chartmodel', function (req, res) {
     keyword: 'bitcoin',  startTime: weekAgoTime,  endTime: endTime,granularTimeResolution: true,granularTimeResolution: true, timezone :"0"}),
 coindesk.getCurrentPrice()
     ]).then(function(values) {
-    console.log(values[0]);
+    //console.log(values[0]);
     console.log(values[1]);
     console.log(values[2]);
-    console.log(values[3]);
+    //console.log(values[3]);
     var chartModelProducer = new ChartModelProducer();
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     normalizedCoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0],values[3]);    

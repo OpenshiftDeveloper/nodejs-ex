@@ -16,7 +16,7 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     normalizedLongData = normalizeGoogleTrendsTimeline(longTimelineData);
     normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);    
     var duration = moment.duration(normalizedLongData[1].time.diff(normalizedLongData[0].time));
-    console.log(duration.asHours()+" duration.asHours()");
+    //console.log(duration.asHours()+" duration.asHours()");
     if(duration.asHours()>20){
         normalizedWeekData = getDailyTimeline(normalizedWeekData);
     };
@@ -25,9 +25,9 @@ method.normalizeGoogleTrends = function (data, lastWeekData) {
     // console.log(normalizedWeekData);
     connectedData = getConnectedTimelines(normalizedLongData, normalizedWeekData)
     //console.log(normalizedTrends.length);
-    for (var i in connectedData) {
+   /* for (var i in connectedData) {
         console.log(connectedData[i]);
-    }
+    }*/
     
     return connectedData;
 };
@@ -74,6 +74,7 @@ getConnectedTimelines = function (longData, weekData) {
            break;
         }
     }
+    //console.log(weekData);
     weekDataStartPos++;    
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
     //console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
@@ -121,7 +122,7 @@ method.normalizeCoinDesk = function (data, currentPrice) {
     tick.time = moment.utc().startOf('day');
     tick.value = currentPrice.bpi.USD.rate_float;
     normalizedTrends[normalizedTrends.length-1] = tick;
-    console.log(normalizedTrends);
+    //console.log(normalizedTrends);
     return normalizedTrends;
 };
 
