@@ -67,7 +67,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
     }]);
 
 app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
-        $scope.showConfirm = function (ev) {
+        $scope.showInfo = function (ev) {
             // Appending dialog to document.body to cover sidenav in docs app
             var confirm = $mdDialog.alert()
                     .title('What do you see on the chart?')
