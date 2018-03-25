@@ -61,7 +61,7 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
 
 getConnectedTimelines = function (longData, weekData) {
     tick = longData[longData.length-1];
-    var weekDataStartPos;
+    var weekDataStartPos= weekData.length;
     var correctionRatio=1; 
     for (var i in weekData) {
         weekTick = weekData[i];
