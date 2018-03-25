@@ -72,14 +72,14 @@ getConnectedTimelines = function (longData, weekData) {
            break;
         }
     }
-    for (var i in weekData) {
+    /*for (var i in weekData) {
         console.log(weekData[i]);
-    }    
+    } */   
     weekDataStartPos++;    
     connectedData = longData.concat(weekData.slice(weekDataStartPos));
-    for (var i in connectedData) {
+   /*for (var i in connectedData) {
         console.log(connectedData[i]);
-    }
+    }*/
     //console.log(longData.length+" "+weekData.length+" "+connectedData.length+" "+weekData.slice(weekDataStartPos).length);
     for (i = longData.length; i < connectedData.length; i++) { 
            //console.log(parseInt(connectedData[i].value)+" "+correctionRatio+" "+(parseInt(connectedData[i].value) * correctionRatio));
@@ -113,7 +113,7 @@ method.normalizeCoinDesk = function (data, currentPrice) {
     results = data;
     timelineData = results.bpi;
     normalizedTimeline = [];
-    console.log(Object.keys(timelineData).length+" sek "+normalizedTimeline.length);
+    //console.log(Object.keys(timelineData).length+" sek "+normalizedTimeline.length);
     i = 0;
     for (var time in timelineData) {
         tick = new Object();
@@ -125,10 +125,10 @@ method.normalizeCoinDesk = function (data, currentPrice) {
     tick = new Object();
     tick.time = moment.utc().startOf('day');
     tick.value = currentPrice.bpi.USD.rate_float;
-    console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
+    //console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
     normalizedTimeline[normalizedTimeline.length] = tick;
-    console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
-    console.log(normalizedTimeline);
+    //console.log(normalizedTimeline.length+" sek "+(normalizedTimeline.length+1));
+    //console.log(normalizedTimeline);
     return normalizedTimeline;
 };
 
