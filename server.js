@@ -85,6 +85,10 @@ app.get('/', function (req, res) {
   }
 });
 
+app.get('/coinwidget', function (req, res) { 
+    res.render('coinwidget.html');
+});
+
 app.get('/cronjob_69637.html', function (req, res) { 
     res.send('cronjob.de'); 
 });
