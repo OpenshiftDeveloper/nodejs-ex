@@ -1,5 +1,5 @@
 
-app = angular.module("app", ["chart.js", "daterangepicker", "angularMoment", 'ngMaterial', 'ui.bootstrap']);
+app = angular.module("app", ["chart.js", "angularMoment", 'ngMaterial', 'ui.bootstrap', 'ngMessages']);
 app.controller("ChartCtrl", function ($scope, $http) {
     $scope.onClick = function (points, evt) {
         console.log(points, evt);
@@ -64,6 +64,22 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
             $scope.loadChartModel($scope.datePicker.date.startDate.toDate(),
                     $scope.datePicker.date.endDate.toDate());
         }, true);
+        
+        
+         $scope.$watch('startDate', function () {
+            $scope.loadChartModel($scope.startDate,
+                    $scope.endDate);
+        }, true);
+        
+         $scope.$watch('endDate', function () {            
+            $scope.loadChartModel($scope.startDate,
+                    $scope.endDate);
+        }, true);
+        
+        $scope.startDate = new Date();
+        $scope.endDate = new Date();
+  $scope.isOpen = false;
+        
     }]);
 
 app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) {

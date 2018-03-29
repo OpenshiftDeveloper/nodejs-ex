@@ -47,8 +47,8 @@
                             <button class="btn btn-default" ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">5y</button>                           
                         </div>
                         <div class="col-xs-1 col-sm-3 hidden-xs">
-                            <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date"
-                                   min="earliestDate" max="nowDate" />
+                            <md-datepicker ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
+                            <md-datepicker ng-model="endDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
                         </div>
                     </div>
                     <div class="col-xs-1 col-sm-1">
@@ -75,23 +75,10 @@
                 </div>                
             </div>
         </div>
-        <div class="col-sm-12" style='background-color: white;' >
-            <div align="center" style="font-size:16px;margin:0 auto;" class="blockchain-btn"
-                 data-address="1QGssUyRmYbXhrEueSfWHR7oS1xzuv8PRt"
-                 data-shared="false">
-                <div class="blockchain stage-begin">
-                    <img src="https://blockchain.info/Resources/buttons/donate_64.png"/>
-                </div>                        
-                <div class="blockchain stage-ready">
-                    <p align="center">Please Donate To Bitcoin Address: <b>[[address]]</b></p>
-                    <p align="center" class="qr-code"></p>
-                </div>
-                <div class="blockchain stage-paid">
-                    Donation of <b>[[value]] BTC</b> Received. Thank You.
-                </div>
-                <div class="blockchain stage-error">
-                    <font color="red">[[error]]</font>
-                </div>
+        <div class="col-md-2 col-md-offset-5" style='background-color: white;' >
+            <div class="row">
+            <div id="coinwidget" data-icon="true" data-type="primary" data-wallet="1QGssUyRmYbXhrEueSfWHR7oS1xzuv8PRt" ></div>
+            <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ivandiazwm/coinwidget@0.1.1/builds/full.js" charset="utf-8"></script>
             </div>
         </div>
     </body>
