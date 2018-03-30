@@ -12,15 +12,19 @@ method.normalizeGoogleTrends = function (baseData, last5DaysHighResolution) {
     baseTimelineData = JSON.parse(baseData).default.timelineData;
     last5DaysHighResolutionData = JSON.parse(last5DaysHighResolution).default.timelineData;
     normalizedBaseData = normalizeGoogleTrendsTimeline(baseTimelineData);
-    normalizedLast5DaysHighResolution = normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);
-    var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));
-    normalizedLast5Days = normalizedLast5DaysHighResolution;
-    if (duration.asHours() > 20) {
-        normalizedLast5Days = getDailyTimeline(normalizedLast5DaysHighResolution);
-    }    
-    connectedData = getConnectedTimelinesWithVlaueRatioCorrection(normalizedBaseData, normalizedLast5Days);
+    normalizedLast5DaysHighResolution = normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);    
+    normalizedLast5Days = decideIfToConnectHighResDataOrDailyData(normalizedBaseData, normalizedLast5DaysHighResolution);   
+    connectedData = getConnectedDataSeriesWithValueRatioCorrection(normalizedBaseData, normalizedLast5Days);
     return connectedData;
 };
+
+decideIfToConnectHighResDataOrDailyData = function (normalizedBaseData, normalizedLast5DaysHighResolution) {
+  var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));    
+    if (duration.asHours() > 20) {
+        return getDailyTimeline(normalizedLast5DaysHighResolution);
+    }   
+    return normalizedLast5DaysHighResolution; 
+}
 
 
 normalizeGoogleTrendsTimeline = function (timelineData) {
@@ -40,24 +44,30 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
     return normalizedData;
 };
 
-getConnectedTimelinesWithVlaueRatioCorrection = function (longData, last5DaysHighResolution) {
-    tick = longData[longData.length - 1];
-    var last5DaysHighResolutionStartPos = last5DaysHighResolution.length;
-    var correctionRatio = 1;
+getConnectedDataSeriesWithValueRatioCorrection = function (baseData, last5DaysHighResolution) {
+   result =  getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData(baseData, last5DaysHighResolution);
+    connectedData = baseData.concat(last5DaysHighResolution.slice(result.last5DaysHighResolutionStartPos));
+    for (i = baseData.length; i < connectedData.length; i++) {
+        connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * result.correctionRatio);
+    }
+    return connectedData;
+}
+
+getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData = function (baseData,last5DaysHighResolution) {
+    var result = new Object();
+    baseTick = baseData[baseData.length - 1];
+    result.last5DaysHighResolutionStartPos = last5DaysHighResolution.length;
+    result.correctionRatio = 1;
     for (var i in last5DaysHighResolution) {
-        weekTick = last5DaysHighResolution[i];
-        if (weekTick.time >= tick.time) {
-            correctionRatio = tick.value[0] / weekTick.value[0];
-            last5DaysHighResolutionStartPos = i;
+        last5DaysTick = last5DaysHighResolution[i];
+        if (last5DaysTick.time >= baseTick.time) {
+            result.correctionRatio = tick.value[0] / last5DaysTick.value[0];
+            result.last5DaysHighResolutionStartPos = i;
             break;
         }
     }
-    last5DaysHighResolutionStartPos++;
-    connectedData = longData.concat(last5DaysHighResolution.slice(last5DaysHighResolutionStartPos));
-    for (i = longData.length; i < connectedData.length; i++) {
-        connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * correctionRatio);
-    }
-    return connectedData;
+    result.last5DaysHighResolutionStartPos++;
+    return result; 
 }
 
 getDailyTimeline = function (hourlyTimeline) {

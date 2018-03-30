@@ -10,49 +10,31 @@ method.getChartData = function (baseData, adjustedData) {
     chartData[1] =[baseData.length];
     cursor = new Object();
     cursor.position = 0;
-//console.log(baseData);
-//console.log(adjustedData);
     for (var i in baseData) {
-        tick = baseData[i];
-       
-        chartData[1][i] = tick.value;
-        
-        chartData[0][i] = method.getValueFromAdjustedDataByBaseDataTime(tick.time,adjustedData,cursor);        
-        //console.log(baseData[i]);
+        tick = baseData[i];       
+        chartData[1][i] = tick.value;        
+        chartData[0][i] = method.getValueFromAdjustedDataByBaseDataTime(tick.time, adjustedData,cursor);                
     }
-    //actual price
-    //chartData[0][chartData[0].length-1] = adjustedData[adjustedData.length-1].value;
-    //console.log("chartData[1][chartData.length-1] "+adjustedData[adjustedData.length-1].value);
-    //console.log("chartData[1][chartData.length-1] "+chartData);
     return chartData;
 };
 
-method.getValueFromAdjustedDataByBaseDataTime = function (baseDataTime, adjustedData, cursor) {
-    //console.log(adjustedData);
-    //console.log(cursor.position);
-    
+method.getValueFromAdjustedDataByBaseDataTime = function (baseDataTime, adjustedData, cursor) {    
     tick = adjustedData[cursor.position];
-    //console.log(adjustedData.length);
+  
     resultValue = tick.value;
     if (cursor.position < adjustedData.length - 1) {
         nextTick = adjustedData[cursor.position + 1];
-        //console.log(adjustedData);
-        //console.log("nextTick.time "+nextTick.time+" "+nextTick.value +" "+baseDataTime+" "+cursor.position);
         while (nextTick.time <= baseDataTime) {
-           // console.log(nextTick.time);
+           
            resultValue = nextTick.value;
             cursor.position++;
             if (cursor.position >= adjustedData.length-1) {
                 break;
             }
             
-            
-           
-           //console.log("resultValue "+resultValue);
            nextTick = adjustedData[cursor.position+1];
         }
-    }
-    //console.log(resultValue);
+    }    
     return resultValue;
 };
 
