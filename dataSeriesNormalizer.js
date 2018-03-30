@@ -47,14 +47,14 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
 getConnectedDataSeriesWithValueRatioCorrection = function (baseData, last5DaysHighResolution) {
     result = getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData(baseData, last5DaysHighResolution);
     connectedData = connectLastDays(baseData, last5DaysHighResolution, result.last5DaysHighResolutionStartPos);
-    return fixLastDaysValuesAccordingToTheRatio(connectedData);
+    return fixLastDaysValuesAccordingToTheRatio(connectedData, baseData);
 }
 
 connectLastDays = function (baseData, last5DaysHighResolution, last5DaysHighResolutionStartPos) {
     return baseData.concat(last5DaysHighResolution.slice(last5DaysHighResolutionStartPos));
 }
 
-fixLastDaysValuesAccordingToTheRatio = function (connectedData) {
+fixLastDaysValuesAccordingToTheRatio = function (connectedData, baseData) {
     for (i = baseData.length; i < connectedData.length; i++) {
         connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * result.correctionRatio);
     }
