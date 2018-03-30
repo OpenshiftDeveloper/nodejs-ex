@@ -5,11 +5,9 @@
   "main": "server.js",
   "dependencies": {
     "angular-bootstrap-npm": "^0.14.3",
-    "angular-chart.js": "1.1.1",
-    "angular-daterangepicker": "^0.2.3-alpha1",
+    "angular-chart.js": "1.1.1",    
     "angular-messages": "^1.6.9",
-    "angular-moment": "^1.2.0",
-    "bootstrap-daterangepicker": "^2.1.30",
+    "angular-moment": "^1.2.0",    
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
     "chart.js": "^2.7.2",
