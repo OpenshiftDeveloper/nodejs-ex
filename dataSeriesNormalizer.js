@@ -8,16 +8,17 @@ function DataSeriesNormalizer(age) {
     this._age = age;
 }
 
-method.normalizeGoogleTrends = function (baseData, weekData) {
+method.normalizeGoogleTrends = function (baseData, last5DaysHighResolution) {
     baseTimelineData = JSON.parse(baseData).default.timelineData;
-    weekTimelineData = JSON.parse(weekData).default.timelineData;
+    last5DaysHighResolutionData = JSON.parse(last5DaysHighResolution).default.timelineData;
     normalizedBaseData = normalizeGoogleTrendsTimeline(baseTimelineData);
-    normalizedWeekData = normalizeGoogleTrendsTimeline(weekTimelineData);
+    normalizedLast5DaysHighResolution = normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);
     var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));
+    normalizedLast5Days = normalizedLast5DaysHighResolution;
     if (duration.asHours() > 20) {
-        normalizedWeekData = getDailyTimeline(normalizedWeekData);
+        normalizedLast5Days = getDailyTimeline(normalizedLast5DaysHighResolution);
     }    
-    connectedData = getConnectedTimelinesWithVlaueRatioCorrection(normalizedBaseData, normalizedWeekData);
+    connectedData = getConnectedTimelinesWithVlaueRatioCorrection(normalizedBaseData, normalizedLast5Days);
     return connectedData;
 };
 
@@ -39,20 +40,20 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
     return normalizedData;
 };
 
-getConnectedTimelinesWithVlaueRatioCorrection = function (longData, weekData) {
+getConnectedTimelinesWithVlaueRatioCorrection = function (longData, last5DaysHighResolution) {
     tick = longData[longData.length - 1];
-    var weekDataStartPos = weekData.length;
+    var last5DaysHighResolutionStartPos = last5DaysHighResolution.length;
     var correctionRatio = 1;
-    for (var i in weekData) {
-        weekTick = weekData[i];
+    for (var i in last5DaysHighResolution) {
+        weekTick = last5DaysHighResolution[i];
         if (weekTick.time >= tick.time) {
             correctionRatio = tick.value[0] / weekTick.value[0];
-            weekDataStartPos = i;
+            last5DaysHighResolutionStartPos = i;
             break;
         }
     }
-    weekDataStartPos++;
-    connectedData = longData.concat(weekData.slice(weekDataStartPos));
+    last5DaysHighResolutionStartPos++;
+    connectedData = longData.concat(last5DaysHighResolution.slice(last5DaysHighResolutionStartPos));
     for (i = longData.length; i < connectedData.length; i++) {
         connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * correctionRatio);
     }
