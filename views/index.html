@@ -39,12 +39,12 @@
                 <div class="row">
                     <div ng-controller="DateCtrl">
                         <div class="col-xs-7 col-sm-4" >
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: weekDate, endDate: nowDate}">1w</button>
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: monthDate, endDate: nowDate}">1m</button>
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: halfYearDate, endDate: nowDate}">6m</button>
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: yearDate, endDate: nowDate}">1y</button>
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: year2Date, endDate: nowDate}">2y</button>
-                            <button class="btn btn-default" ng-click="datePicker.date = {startDate: year5Date, endDate: nowDate}">5y</button>                           
+                            <button class="btn btn-default" ng-click="startDate = weekDate; endDate = nowDate;">1w</button>
+                            <button class="btn btn-default" ng-click="startDate = monthDate; endDate = nowDate;">1m</button>
+                            <button class="btn btn-default" ng-click="startDate = halfYearDate; endDate = nowDate;">6m</button>
+                            <button class="btn btn-default" ng-click="startDate = yearDate; endDate = nowDate;">1y</button>
+                            <button class="btn btn-default" ng-click="startDate = year2Date; endDate = nowDate;">2y</button>
+                            <button class="btn btn-default" ng-click="startDate = year5Date; endDate = nowDate;">5y</button>                           
                         </div>
                         <div class="col-xs-1 col-sm-3 hidden-xs">
                             <md-datepicker ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>

@@ -43,44 +43,58 @@ app.controller("ChartCtrl", function ($scope, $http) {
 });
 
 app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
-
-        $scope.nowDate = moment().utc().startOf('day');
-        $scope.latestDate = moment().utc().subtract(1, 'days');
-
-        $scope.weekDate = $scope.nowDate.clone().subtract(6, 'days');
-        $scope.monthDate = $scope.nowDate.clone().subtract(1, 'months');
-        $scope.halfYearDate = $scope.nowDate.clone().subtract(6, 'months');
-        $scope.yearDate = $scope.nowDate.clone().subtract(1, 'years');
-        $scope.year2Date = $scope.nowDate.clone().subtract(2, 'years');
-        $scope.year5Date = $scope.nowDate.clone().subtract(5, 'years');       
-        $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc();
+        preparePresetDates($scope);
 
         $scope.datePicker = new Object();
         $scope.datePicker.date = {startDate: $scope.monthDate, endDate: $scope.nowDate};
 
-        $scope.$watchCollection('datePicker', function () {
-            $scope.datePicker.date.startDate.add(moment().utcOffset(), "minutes").utc().startOf('day');            
-            $scope.datePicker.date.endDate.endOf('day');
-            $scope.loadChartModel($scope.datePicker.date.startDate.toDate(),
-                    $scope.datePicker.date.endDate.toDate());
-        }, true);
-        
-        
-         $scope.$watch('startDate', function () {
-            $scope.loadChartModel($scope.startDate,
-                    $scope.endDate);
-        }, true);
-        
-         $scope.$watch('endDate', function () {            
-            $scope.loadChartModel($scope.startDate,
-                    $scope.endDate);
-        }, true);
-        
-        $scope.startDate = new Date();
-        $scope.endDate = new Date();
-  $scope.isOpen = false;
-        
+        updateChartOnDateChange($scope);
+        setChartInitialDates($scope);
+
+        $scope.startDate = $scope.monthDate;
+        $scope.endDate = $scope.nowDate;
+
     }]);
+
+function  setChartInitialDates($scope) {
+    $scope.datePicker.date.startDate = $scope.monthDate;
+    $scope.datePicker.date.endDate = $scope.nowDate;
+}
+
+function  preparePresetDates($scope) {
+    $scope.nowDateMoment = moment().utc().startOf('day');
+    $scope.nowDate = $scope.nowDateMoment.clone().toDate();
+    $scope.latestDate = moment().utc().subtract(1, 'days').toDate();
+
+    $scope.weekDate = $scope.nowDateMoment.clone().subtract(6, 'days').toDate();
+    $scope.monthDate = $scope.nowDateMoment.clone().subtract(1, 'months').toDate();
+    $scope.halfYearDate = $scope.nowDateMoment.clone().subtract(6, 'months').toDate();
+    $scope.yearDate = $scope.nowDateMoment.clone().subtract(1, 'years').toDate();
+    $scope.year2Date = $scope.nowDateMoment.clone().subtract(2, 'years').toDate();
+    $scope.year5Date = $scope.nowDateMoment.clone().subtract(5, 'years').toDate();
+    $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc().toDate();
+}
+
+function  updateChartOnDateChange($scope) {
+
+   /* $scope.$watchCollection('datePicker', function () {
+console.log("sdsd");
+        $scope.loadChartModel($scope.datePicker.date.startDate,
+                $scope.datePicker.date.endDate);
+    }, true);*/
+
+
+    $scope.$watch('startDate', function () {
+        $scope.loadChartModel($scope.startDate,
+                $scope.endDate);
+    }, true);
+
+    $scope.$watch('endDate', function () {
+        $scope.loadChartModel($scope.startDate,
+                $scope.endDate);
+    }, true);
+
+}
 
 app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
         $scope.showInfo = function (ev) {
