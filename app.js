@@ -1,5 +1,5 @@
 
-app = angular.module("app", ["chart.js", "angularMoment", 'ngMaterial', 'ui.bootstrap', 'ngMessages']);
+app = angular.module("app", ["chart.js", "angularMoment", 'ngMaterial', 'ngMessages']);
 app.controller("ChartCtrl", function ($scope, $http) {
     $scope.onClick = function (points, evt) {
         console.log(points, evt);
@@ -39,7 +39,7 @@ app.controller("ChartCtrl", function ($scope, $http) {
 
 });
 
-app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
+app.controller('DateCtrl', ['$scope', 'moment', function ($scope, moment) {
         preparePresetDates($scope);
 
         $scope.datePicker = new Object();

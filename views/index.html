@@ -7,27 +7,20 @@
         <title>Bitcoin Price vs Bitcoin Interest</title>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/2.1.13/daterangepicker.min.css" />
+       
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.css">
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
         <script src="node_modules/chart.js/dist/Chart.min.js"></script>
         <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>        
+       
         <script src="node_modules/moment/moment.js"></script>
-        <script src="node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
-        <script src="node_modules/angular-daterangepicker/js/angular-daterangepicker.js"></script>        
-        <script src="node_modules/moment/moment.js"></script>
-        <script src="node_modules/angular-moment/angular-moment.js"></script>
-        <script src="node_modules/angular-bootstrap-npm/dist/angular-bootstrap.min.js"></script>
+        <script src="node_modules/angular-moment/angular-moment.js"></script>       
 
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-animate.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-messages.min.js"></script>        
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"  crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://blockchain.info/Resources/js/pay-now-button.js"></script>
 
         <script src="app"></script>
 
@@ -47,8 +40,8 @@
                             <button class="btn btn-default" ng-click="startDate = year5Date; endDate = nowDate;">5y</button>                           
                         </div>
                         <div class="col-xs-1 col-sm-3 hidden-xs">
-                            <md-datepicker ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
-                            <md-datepicker ng-model="endDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
+                            <md-datepicker md-hide-icons="triangle"  md-min-date="earliestDate" md-max-date="nowDate"  ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
+                            <md-datepicker md-hide-icons="triangle" md-min-date="earliestDate" md-max-date="nowDate"  ng-model="endDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
                         </div>
                     </div>
                     <div class="col-xs-1 col-sm-1">
