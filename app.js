@@ -37,9 +37,6 @@ app.controller("ChartCtrl", function ($scope, $http) {
         }, function (error) {});
     };
 
-
-
-
 });
 
 app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, moment, $mdDialog) {
@@ -48,7 +45,7 @@ app.controller('DateCtrl', ['$scope', 'moment', '$mdDialog', function ($scope, m
         $scope.datePicker = new Object();
         $scope.datePicker.date = {startDate: $scope.monthDate, endDate: $scope.nowDate};
 
-        updateChartOnDateChange($scope);
+        updateChartOnDateChange($scope, moment);
         setChartInitialDates($scope);
 
         $scope.startDate = $scope.monthDate;
@@ -75,25 +72,24 @@ function  preparePresetDates($scope) {
     $scope.earliestDate = moment("2015-01-01").utc().endOf('day').utc().toDate();
 }
 
-function  updateChartOnDateChange($scope) {
-
-   /* $scope.$watchCollection('datePicker', function () {
-console.log("sdsd");
-        $scope.loadChartModel($scope.datePicker.date.startDate,
-                $scope.datePicker.date.endDate);
-    }, true);*/
-
-
+function  updateChartOnDateChange($scope, moment) {  
     $scope.$watch('startDate', function () {
-        $scope.loadChartModel($scope.startDate,
+        $scope.loadChartModel(adjustTheStartDateToUtcDayStart($scope.startDate, moment),
                 $scope.endDate);
     }, true);
 
-    $scope.$watch('endDate', function () {
+    $scope.$watch('endDate', function () {                    
         $scope.loadChartModel($scope.startDate,
-                $scope.endDate);
+                 adjustTheEndDateToUtcDayEnd($scope.endDate, moment));                 
     }, true);
+}
 
+function  adjustTheStartDateToUtcDayStart(startDate, moment) {  
+    return moment(startDate).add(moment().utcOffset(), "minutes").utc().startOf('day').toDate()
+}
+
+function  adjustTheEndDateToUtcDayEnd(endDate, moment) {  
+    return moment(endDate).utc().endOf('day').toDate();
 }
 
 app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) {
