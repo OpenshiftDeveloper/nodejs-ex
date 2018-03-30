@@ -21,6 +21,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-aria.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular-messages.min.js"></script>        
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.6/angular-material.min.js"></script>
+        
 
         <script src="app"></script>
 
@@ -37,11 +38,11 @@
                             <button class="btn btn-default" ng-click="startDate = halfYearDate; endDate = nowDate;">6m</button>
                             <button class="btn btn-default" ng-click="startDate = yearDate; endDate = nowDate;">1y</button>
                             <button class="btn btn-default" ng-click="startDate = year2Date; endDate = nowDate;">2y</button>
-                            <button class="btn btn-default" ng-click="startDate = year5Date; endDate = nowDate;">5y</button>                           
+                            <button class="btn btn-default" ng-click="startDate = earliestDate; endDate = nowDate;">max</button>                           
                         </div>
-                        <div class="col-xs-1 col-sm-3 hidden-xs">
-                            <md-datepicker md-hide-icons="triangle"  md-min-date="earliestDate" md-max-date="nowDate"  ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
-                            <md-datepicker md-hide-icons="triangle" md-min-date="earliestDate" md-max-date="nowDate"  ng-model="endDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
+                        <div class="col-xs-1 col-sm-4 hidden-xs">
+                            <md-datepicker md-hide-icons="calendar"  md-min-date="earliestDate" md-max-date="nowDate"  ng-model="startDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
+                            <md-datepicker md-hide-icons="calendar" md-min-date="earliestDate" md-max-date="nowDate"  ng-model="endDate" md-placeholder="Enter date" md-open-on-focus=""></md-datepicker>
                         </div>
                     </div>
                     <div class="col-xs-1 col-sm-1">
@@ -53,7 +54,7 @@
 
                         </div>
                     </div>
-                    <div class="col-xs-3 col-sm-4 hidden-xs"><h4 class="text-info">Bitcoin Price vs. Bitcoin Interest</h4>
+                    <div class="col-xs-3 col-sm-3 hidden-xs"><h3 class="text-info">Bitcoin Price vs. Bitcoin Interest</h3>
                     </div>
                 </div>
 
@@ -68,7 +69,7 @@
                 </div>                
             </div>
         </div>
-        <div class="col-md-2 col-md-offset-5" style='background-color: white;' >
+        <div class="col-xs-2 col-xs-offset-5" style='background-color: white;' >
             <div class="row">
             <div id="coinwidget" data-icon="true" data-type="primary" data-wallet="1QGssUyRmYbXhrEueSfWHR7oS1xzuv8PRt" ></div>
             <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ivandiazwm/coinwidget@0.1.1/builds/full.js" charset="utf-8"></script>
