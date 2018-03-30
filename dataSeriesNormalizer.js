@@ -12,18 +12,18 @@ method.normalizeGoogleTrends = function (baseData, last5DaysHighResolution) {
     baseTimelineData = JSON.parse(baseData).default.timelineData;
     last5DaysHighResolutionData = JSON.parse(last5DaysHighResolution).default.timelineData;
     normalizedBaseData = normalizeGoogleTrendsTimeline(baseTimelineData);
-    normalizedLast5DaysHighResolution = normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);    
-    normalizedLast5Days = decideIfToConnectHighResDataOrDailyData(normalizedBaseData, normalizedLast5DaysHighResolution);   
+    normalizedLast5DaysHighResolution = normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);
+    normalizedLast5Days = decideIfToConnectHighResDataOrDailyData(normalizedBaseData, normalizedLast5DaysHighResolution);
     connectedData = getConnectedDataSeriesWithValueRatioCorrection(normalizedBaseData, normalizedLast5Days);
     return connectedData;
 };
 
 decideIfToConnectHighResDataOrDailyData = function (normalizedBaseData, normalizedLast5DaysHighResolution) {
-  var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));    
+    var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));
     if (duration.asHours() > 20) {
         return getDailyTimeline(normalizedLast5DaysHighResolution);
-    }   
-    return normalizedLast5DaysHighResolution; 
+    }
+    return normalizedLast5DaysHighResolution;
 }
 
 
@@ -45,15 +45,23 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
 };
 
 getConnectedDataSeriesWithValueRatioCorrection = function (baseData, last5DaysHighResolution) {
-   result =  getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData(baseData, last5DaysHighResolution);
-    connectedData = baseData.concat(last5DaysHighResolution.slice(result.last5DaysHighResolutionStartPos));
+    result = getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData(baseData, last5DaysHighResolution);
+    connectedData = connectLastDays(baseData, last5DaysHighResolution, result.last5DaysHighResolutionStartPos);
+    return fixLastDaysValuesAccordingToTheRatio(connectedData);
+}
+
+connectLastDays = function (baseData, last5DaysHighResolution, last5DaysHighResolutionStartPos) {
+    return baseData.concat(last5DaysHighResolution.slice(last5DaysHighResolutionStartPos));
+}
+
+fixLastDaysValuesAccordingToTheRatio = function (connectedData) {
     for (i = baseData.length; i < connectedData.length; i++) {
         connectedData[i].value[0] = parseInt(parseInt(connectedData[i].value) * result.correctionRatio);
     }
     return connectedData;
 }
 
-getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData = function (baseData,last5DaysHighResolution) {
+getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData = function (baseData, last5DaysHighResolution) {
     var result = new Object();
     baseTick = baseData[baseData.length - 1];
     result.last5DaysHighResolutionStartPos = last5DaysHighResolution.length;
@@ -67,7 +75,7 @@ getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData = function (baseDat
         }
     }
     result.last5DaysHighResolutionStartPos++;
-    return result; 
+    return result;
 }
 
 getDailyTimeline = function (hourlyTimeline) {
