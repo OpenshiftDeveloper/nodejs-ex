@@ -19,11 +19,19 @@ method.normalizeGoogleTrends = function (baseData, last5DaysHighResolution) {
 };
 
 decideIfToConnectHighResDataOrDailyData = function (normalizedBaseData, normalizedLast5DaysHighResolution) {
-    var duration = moment.duration(normalizedBaseData[1].time.diff(normalizedBaseData[0].time));
-    if (duration.asHours() > 20) {
-        return getDailyTimeline(normalizedLast5DaysHighResolution);
+    if (isGoogleTrendsDataInHighResolution(normalizedBaseData)) {
+        return normalizedLast5DaysHighResolution;
     }
-    return normalizedLast5DaysHighResolution;
+    return getDailyTimeline(normalizedLast5DaysHighResolution);
+}
+
+
+isGoogleTrendsDataInHighResolution = function (googleTrendsData) {
+    var duration = moment.duration(googleTrendsData[1].time.diff(googleTrendsData[0].time));
+    if (duration.asHours() > 20) {
+        return false;
+    }
+    return true;
 }
 
 
