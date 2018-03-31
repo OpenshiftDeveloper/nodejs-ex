@@ -57,7 +57,11 @@ function getTimeLabels(baseData) {
     series = []
     for (var i in baseData) {
         tick = baseData[i];
-        series[i] = tick.time.format('lll');
+        if (isGoogleTrendsDataInHighResolution(baseData)) {
+            series[i] = tick.time.format('lll');
+        } else {
+            series[i] = tick.time.format('ll');
+        }
     }
     return series;
 }
