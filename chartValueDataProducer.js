@@ -1,6 +1,6 @@
-var method = ChartDataProducer.prototype;
+var method = ChartValueDataProducer.prototype;
 
-function ChartDataProducer() {
+function ChartValueDataProducer() {
 
 }
 
@@ -39,4 +39,4 @@ method.getValueFromAdjustedDataByBaseDataTime = function (baseDataTime, adjusted
 };
 
 // Functions which will be available to external callers
-module.exports = ChartDataProducer;
+module.exports = ChartValueDataProducer;

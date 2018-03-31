@@ -9,7 +9,7 @@ const coindesk = require('node-coindesk-api');
 const googleTrends = require('google-trends-api');
 
 var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
-var ChartDataProducer = require("./chartDataProducer.js");
+var ChartValueDataProducer = require("./chartValueDataProducer.js");
 
 method.getChartModel = function (startTimeParam, endTimeParam) {
     return new Promise(function (resolve) {
@@ -45,7 +45,7 @@ normalizeDataSeries = function (values) {
 
 getChartModelFromNormalizedTimelines = function (baseData, adjustedData) {
     chartModel = new Object();
-    var chartDataProducer = new ChartDataProducer();
+    var chartDataProducer = new ChartValueDataProducer();
     chartData = chartDataProducer.getChartData(baseData, adjustedData);
     chartModel.data = chartData;
     chartModel.series = ['Bitcoin Price', 'Bitcoin Interest'];
