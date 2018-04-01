@@ -100,7 +100,8 @@ app.get('/pagecount', function (req, res) {
   }
 });
 
-app.get('/chartmodel', function (req, res) {   
+app.get('/chartmodel', function (req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     //console.log(req.param("startTime"));
     //console.log(req.param("endTime"));
     var startTimeParam = req.param("startTime");
