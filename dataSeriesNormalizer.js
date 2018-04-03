@@ -55,7 +55,8 @@ normalizeGoogleTrendsTimeline = function (timelineData) {
 getConnectedDataSeriesWithValueRatioCorrection = function (baseData, last5DaysHighResolution) {
     result = getCorrectionRatioAndStartOfPartToBeConnectedFromHighResData(baseData, last5DaysHighResolution);
     connectedData = connectLastDays(baseData, last5DaysHighResolution, result.last5DaysHighResolutionStartPos);
-    return fixLastDaysValuesAccordingToTheRatio(connectedData, baseData);
+    //return fixLastDaysValuesAccordingToTheRatio(connectedData, baseData);
+    return  baseData;
 }
 
 connectLastDays = function (baseData, last5DaysHighResolution, last5DaysHighResolutionStartPos) {
