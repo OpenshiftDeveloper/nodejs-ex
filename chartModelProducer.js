@@ -48,7 +48,7 @@ getChartModelFromNormalizedTimelines = function (baseData, adjustedData) {
     var chartDataProducer = new ChartValueDataProducer();
     chartData = chartDataProducer.getChartData(baseData, adjustedData);
     chartModel.data = chartData;
-    chartModel.series = ['Bitcoin Price', 'Bitcoin Interest'];
+    chartModel.series = ['Bitcoin Price', 'Search Interest'];
     chartModel.labels = getTimeLabels(baseData);
     return chartModel;
 };

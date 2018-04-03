@@ -1,11 +1,12 @@
 
 app = angular.module("app", ["chart.js", "angularMoment", 'ngMaterial', 'ngMessages']);
-app.controller("ChartCtrl", function ($scope, $http) {
-    $scope.onClick = function (points, evt) {
-        console.log(points, evt);
-    };
+app.controller("ChartCtrl", function ($scope, $http) {    
     $scope.datasetOverride = [{yAxisID: 'y-axis-1'}, {yAxisID: 'y-axis-2'}];
     $scope.options = {
+        legend: {
+            display: true,
+            position: "top"
+        },
         scales: {
             yAxes: [
                 {
