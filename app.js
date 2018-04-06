@@ -49,7 +49,7 @@ app.controller('DateCtrl', ['$scope', 'moment', function ($scope, moment) {
         updateChartOnDateChange($scope, moment);
         setChartInitialDates($scope);
 
-        $scope.startDate = $scope.monthDate;
+        $scope.startDate = $scope.yearDate;
         $scope.endDate = $scope.nowDate;
 
     }]);
