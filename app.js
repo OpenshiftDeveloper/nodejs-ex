@@ -3,9 +3,9 @@ app = angular.module("app", ["chart.js", "angularMoment", 'ngMaterial', 'ngMessa
 app.controller("ChartCtrl", function ($scope, $http) {    
     $scope.datasetOverride = [{yAxisID: 'y-axis-1'}, {yAxisID: 'y-axis-2'}];
     $scope.options = {
-        legend: {
-            display: true,
-            position: "top"
+        tooltips: {
+           mode: "index",
+           intersect: false
         },
         scales: {
             yAxes: [
@@ -99,7 +99,7 @@ app.controller('InfoCtrl', ['$scope', '$mdDialog', function ($scope, $mdDialog) 
             var confirm = $mdDialog.alert()
                     .title('What do you see on the chart?')
                     .textContent('The chart shows bitcoin price (USD) compared with how much people search for the term "bitcoin" on Google.\n\
- The bitcoin price is fetched from CoinDesk. The search interest is fetched from Google Trends. The search interest numbers represent interest relative to the highest point on the chart for the given time in percents. The times are in the UTC time zone.')
+ The bitcoin price (blue) is fetched from CoinDesk. The search interest (grey) is fetched from Google Trends. The search interest numbers represent interest relative to the highest point on the chart for the given time in percents. The times are in the UTC time zone.')
                     .ok('Ok')
             $mdDialog.show(confirm).then(function () {
             }, function () {
