@@ -6,6 +6,7 @@ var express = require('express'),
 Object.assign = require('object-assign')
 
 var ChartModelProducer = require("./chartModelProducer.js");
+var Database = require("./database.js");
 
 app.engine('html', require('ejs').renderFile);
 
@@ -102,11 +103,16 @@ app.get('/pagecount', function (req, res) {
     }
 });
 
+var moment = require('moment');
+
 app.get('/chartmodel', function (req, res) {
     //console.log(req.param("startTime"));
     //console.log(req.param("endTime"));
     var startTimeParam = req.param("startTime");
     var endTimeParam = req.param("endTime");
+    
+    var database = new Database(db);
+    database.insertDataMissingFrom(moment().subtract(1, 'weeks').startOf('isoWeek').toDate());
 
     var chartModelProducer = new ChartModelProducer();
     chartModelProducer.getChartModel(startTimeParam, endTimeParam).then(function (chartModel) {
