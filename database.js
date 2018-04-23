@@ -80,6 +80,30 @@ method.getLastStoredWeekData = function () {
     return results;
 }
 
+method.getBetweenDates = function (from, to) {
+    var results = [];
+
+    if (!db) {
+        initDb(function (err) {});
+    }
+
+    if (db) {
+        db.collection("interest").find({
+            created_at: {
+                $gt: from,
+                $lt: to
+            }
+        }).toArray(function (err, result) {
+            if (err)
+                throw err;
+            console.log(result);
+            results.push(result);
+            db.close();
+        });
+    }
+    return results;
+}
+
 
 
 method.insertDataMissingFrom = function (lastDataDate) {
@@ -92,8 +116,8 @@ method.insertDataMissingFrom = function (lastDataDate) {
                 keyword: 'bitcoin', startTime: lastDataDate, endTime: moment().utc().toDate(), granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
         ]).then(function (values) {
             var dataSeriesNormalizer = new DataSeriesNormalizer();
-            
-           timelineData = JSON.parse(values[0]).default.timelineData;
+
+            timelineData = JSON.parse(values[0]).default.timelineData;
             normalizedGoogleTrendsTimeline = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData);
             console.log(normalizedGoogleTrendsTimeline);
             db.collection("interest").insertMany(normalizedGoogleTrendsTimeline, function (err, res) {
