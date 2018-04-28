@@ -121,21 +121,21 @@ method.insertDataMissingFrom = function (lastDataDate) {
 
             timelineData = JSON.parse(values[0]).default.timelineData;
             normalizedGoogleTrendsTimeline = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData);
-            dataToBeStored = getFormatToBeStaoredInDatabase(normalizedGoogleTrendsTimeline);
+            dataToBeStored = getFormatToBeStoredInDatabase(normalizedGoogleTrendsTimeline);
 
             console.log(dataToBeStored);
-            db.collection("interest").insertMany(dataToBeStored, function (err, res) {
-                if (err)
-                    throw err;
-                console.log("Number of documents inserted: " + res.insertedCount);
-                db.close();
-            });
+            /*db.collection("interest").insertMany(dataToBeStored, function (err, res) {
+             if (err)
+             throw err;
+             console.log("Number of documents inserted: " + res.insertedCount);
+             db.close();
+             });*/
         })
     }
 
 }
 
-function getFormatToBeStaoredInDatabase(normalizedData) {
+function getFormatToBeStoredInDatabase(normalizedData) {
     dataToBeStoredInDatabase = [normalizedData.length];
     for (var i in normalizedData) {
         tick = new Object();
@@ -156,28 +156,37 @@ function getTwoFirstEndOfDayTicks(data) {
                 twoFirstEndOfDayTicks[1] = time;
                 return twoFirstEndOfDayTicks;
             } else {
-                twoFirstEndOfDayTicks[0] = time;
+                twoFirstEndOfDayTicks[0] = data[i];
             }
         }
     }
 }
 
-function getTwoFirstEndOfDayTicks(data) {
-    twoFirstEndOfDayTicks = new Array(2);
-    firstFound = false;
-    for (var i in twoFirstEndOfDayTicks) {
-        time = data[i].time;
-        if (moment(time).diff(moment(time).endOf('day')) == 0) {
-            if (firstFound) {
-                twoFirstEndOfDayTicks[1] = time;
-                return twoFirstEndOfDayTicks;
-            } else {
-                twoFirstEndOfDayTicks[0] = time;
-                firstFound = true;
-            }
-        }
+function scaleAdjusting(lastDate, previousData) {
+    daysDiff = moment.diff(lastDate, 'days');
+    numberOfRequests = daysDiff / 5;
+    for (i = numberOfRequests - 1; i > -1; i--) {
+        from = moment.subtract(5 * i, 'days');
+        to = moment.subtract(5 * i - 7, 'weeks');
+        actualData = getData(from, to);
+        twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
+        sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
+        crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
+        insideRequestRatioActual = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
+        insideRequestRatioPrevious = twoFirstEndOfDayTicks[0].value / twoFirstEndOfDayTicks[1].value;
+        factorToBeNewRequestMultipliedBy = insideRequestRatioPrevious.value / insideRequestRatioActual.value / crossRequestRatio.value;
+        actualData[0].value = actualData[0].value/ crossRequestRatio;
+        for (i = 1; i < actualData.length; i++) { 
+             actualData[i].value = actualData[i].value *factorToBeNewRequestMultipliedBy;
+         }
+        previousData = actualData;
+
     }
+
+
 }
+
+
 
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
     sameTicks = new Array(2);
@@ -189,7 +198,7 @@ function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
             return sameTicks;
         }
         if (time.getTime() === twoFirstEndOfDayTicks[1].time.getTime()) {
-            sameTicks[1] = data[i];            
+            sameTicks[1] = data[i];
         }
     }
 }
