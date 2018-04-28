@@ -112,7 +112,7 @@ app.get('/chartmodel', function (req, res) {
     var endTimeParam = req.param("endTime");
     
     var database = new Database(db);
-    database.getBetweenDates(moment().subtract(1, 'weeks').startOf('isoWeek').toDate(), new Date());
+    database.getData();
 
     var chartModelProducer = new ChartModelProducer();
     chartModelProducer.getChartModel(startTimeParam, endTimeParam).then(function (chartModel) {
