@@ -153,7 +153,8 @@ method.getDataFromGoogleTrends = function (from, to) {
             ]).then(function (values) {
                 var dataSeriesNormalizer = new DataSeriesNormalizer();
                 timelineData = JSON.parse(values[0]).default.timelineData;
-                resolve(normalizedGoogleTrendsTimeline = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData));
+                normalizedData = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData);
+                resolve(normalizedData);
             }).catch(function (error) {
                 return reject(error);
             });
@@ -176,16 +177,25 @@ function getFormatToBeStoredInDatabase(normalizedData) {
 function getTwoFirstEndOfDayTicks(data) {
     twoFirstEndOfDayTicks = new Array(2);
     firstFound = false;
-    for (i = 0; i < 2; i++) { 
-        time = data[i].time;
-        console.log("getTwoFirstEndOfDayTicks time " + time);
-        if (moment(time).diff(moment(time).endOf('day')) == 0) {
+    for (i in data) {
+        tick = data[i]
+        if (moment(tick.time).diff(moment(tick.time).startOf('day')) == 0) {
             if (firstFound) {
-                twoFirstEndOfDayTicks[1] = time;
+                twoFirstEndOfDayTicks[1] = tick;
                 return twoFirstEndOfDayTicks;
             } else {
-                twoFirstEndOfDayTicks[0] = data[i];
+                twoFirstEndOfDayTicks[0] = tick;
+                firstFound = true;
             }
+        }
+    }
+}
+
+function getNewDataStartIndex(newDataTime, data) {
+    for (i in data) {       
+        if (moment(data[i].time).diff(newDataTime) == 0) {
+            console.log("getNewDataStartIndex "+data[i].time.format()+" "+newDataTime);
+            return Number(i)+1;
         }
     }
 }
@@ -195,47 +205,68 @@ function scaleAdjusting(lastDate, previousData) {
     daysDiff = moment().diff(lastDate, 'days');
     numberOfRequests = Math.ceil(daysDiff / 5);
     console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
+    missingData = [];
     for (i = numberOfRequests - 1; i > -1; i--) {
-        from = moment().subtract(5 * i+7, 'days').toDate();
-        to = moment().subtract(5 * i , 'days').toDate();
+        from = moment().subtract(5 * i + 7, 'days').toDate();
+        to = moment().subtract(5 * i, 'days').toDate();
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
             sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
-            console.log("getTwoSameTicks " + getTwoSameTicks[0].time + " " + getTwoSameTicks[1].time);
+            console.log("getTwoSameTicks times " + sameTicksInPreviousData[0].time + " " + sameTicksInPreviousData[1].time);
+            console.log("getTwoSameTicks values " + sameTicksInPreviousData[0].value + " " + sameTicksInPreviousData[1].value);
             crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
-            insideRequestRatioActual = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
-            insideRequestRatioPrevious = twoFirstEndOfDayTicks[0].value / twoFirstEndOfDayTicks[1].value;
-            factorToBeNewRequestMultipliedBy = insideRequestRatioPrevious.value / insideRequestRatioActual.value / crossRequestRatio.value;
+            console.log("crossRequestRatio " + crossRequestRatio);
+            insideRequestRatioActual = twoFirstEndOfDayTicksInActualData[0].value / twoFirstEndOfDayTicksInActualData[1].value;
+            console.log("insideRequestRatioActual " + insideRequestRatioActual);
+            insideRequestRatioPrevious = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
+            console.log("insideRequestRatioPrevious " + insideRequestRatioPrevious);
+            factorToBeNewRequestMultipliedBy = insideRequestRatioActual / insideRequestRatioPrevious / crossRequestRatio;
+            console.log("factorToBeNewRequestMultipliedBy " + factorToBeNewRequestMultipliedBy);
+            console.log(actualData);
+            console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             actualData[0].value = actualData[0].value / crossRequestRatio;
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
+            console.log(actualData);
+            console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
+            newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);            
+            missingData = missingData.concat(actualData.slice(newDataStart));
             previousData = actualData;
+             console.log("missingData");
+        console.log(missingData);
+
         });
+       
     }
 }
 
 
 
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
+    console.log(data);
+    console.log(twoFirstEndOfDayTicks);
     sameTicks = new Array(2);
     var dataReversed = data.slice(0).reverse();
     for (var i in dataReversed) {
         time = data[i].time;
-        if (time.getTime() === twoFirstEndOfDayTicks[0].time.getTime()) {
-            sameTicks[0] = data[i];
+        console.log("getTwoSameTicks time " + time);
+        console.log(moment(time).diff(twoFirstEndOfDayTicks[0].time));
+        if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
+            sameTicks[1] = data[i];
+            console.log(sameTicks);
             return sameTicks;
         }
-        if (time.getTime() === twoFirstEndOfDayTicks[1].time.getTime()) {
-            sameTicks[1] = data[i];
+        if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
+            sameTicks[0] = data[i];
         }
     }
 }
 
 method.getData = function () {
-    method.getBetweenDates(moment().subtract(4, 'days').toDate(), new Date()).then(function (data) {
+    method.getBetweenDates(moment().subtract(8, 'days').toDate(), new Date()).then(function (data) {
         console.log("getBetweenDates1 " + data);
         if (data.length == 0) {
             data = method.getLastStoredWeekData();
