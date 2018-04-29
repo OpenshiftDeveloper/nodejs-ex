@@ -61,24 +61,34 @@ function Database() {
 }
 
 method.getLastStoredWeekData = function () {
-    var results = [];
+    return new Promise((resolve, reject) => {
+        if (!db) {
+            initDb(function (err) {});
+            return reject(null);
+        }
 
-    if (!db) {
-        initDb(function (err) {});
-    }
+        if (db) {
+            var mysort = {time: -1};
+            db.collection("interest").find().sort(mysort).limit(2).toArray(function (err, result) {
+                if (err)
+                    return reject(err);
+                console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
+                resolve(result);
+            });
 
-    if (db) {
-        var mysort = {time: -1};
-        db.collection("interest").find().sort(mysort).limit(2).toArray(function (err, result) {
-            if (err)
-                throw err;
-            console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
-            results.push(result);
-            return results;
-        });
-    }
-    console.log("getLastStoredWeekData results.length" + results.length);
-    return results;
+            db.collection("interest").find({
+                time: {
+                    $gt: from,
+                    $lt: to
+                }
+            }).toArray(function (err, result) {
+                if (err)
+                    return reject(err);
+                console.log("method.getBetweenDates " + result.length + " " + result[0].time);
+                resolve(result);
+            });
+        }
+    });
 }
 
 method.getBetweenDates = function (from, to) {
@@ -192,10 +202,10 @@ function getTwoFirstEndOfDayTicks(data) {
 }
 
 function getNewDataStartIndex(newDataTime, data) {
-    for (i in data) {       
+    for (i in data) {
         if (moment(data[i].time).diff(newDataTime) == 0) {
-            console.log("getNewDataStartIndex "+data[i].time.format()+" "+newDataTime);
-            return Number(i)+1;
+            console.log("getNewDataStartIndex " + data[i].time.format() + " " + newDataTime);
+            return Number(i) + 1;
         }
     }
 }
@@ -232,14 +242,14 @@ function scaleAdjusting(lastDate, previousData) {
             }
             console.log(actualData);
             console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
-            newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);            
+            newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);
             missingData = missingData.concat(actualData.slice(newDataStart));
             previousData = actualData;
-             console.log("missingData");
-        console.log(missingData);
+            console.log("missingData");
+            console.log(missingData);
 
         });
-       
+
     }
 }
 
@@ -267,11 +277,15 @@ function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
 
 method.getData = function () {
     method.getBetweenDates(moment().subtract(8, 'days').toDate(), new Date()).then(function (data) {
-        console.log("getBetweenDates1 " + data);
-        if (data.length == 0) {
-            data = method.getLastStoredWeekData();
-            console.log("getBetweenDates2 " + data.length);
-        }
+        return new Promise((resolve, reject) => {
+            console.log("getBetweenDates1 " + data);
+            if (data.length == 0) {
+                return resolve(method.getLastStoredWeekData());
+                console.log("getBetweenDates2 " + data.length);
+            }
+            return resolve(data);
+        })
+    }).then(function (data) {
         lastDate = data[data.length - 1].time;
         scaleAdjusting(lastDate, data);
     });
