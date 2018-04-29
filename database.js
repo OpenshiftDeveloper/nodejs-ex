@@ -74,6 +74,7 @@ method.getLastStoredWeekData = function () {
                 throw err;
             console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
             results.push(result);
+            return results;
         });
     }
     console.log("getLastStoredWeekData results.length" + results.length);
@@ -82,28 +83,29 @@ method.getLastStoredWeekData = function () {
 
 method.getBetweenDates = function (from, to) {
     console.log("method.getBetweenDates from to " + from + " " + to);
-    var results = [];
 
-    if (!db) {
-        initDb(function (err) {});
-    }
+    return new Promise((resolve, reject) => {
+        if (!db) {
+            initDb(function (err) {});
+            return reject(null);
+        }
 
-    if (db) {
-        db.collection("interest").find({
-            time: {
-                $gt: from,
-                $lt: to
-            }
-        }).toArray(function (err, result) {
-            if (err)
-                throw err;
-            console.log("method.getBetweenDates " + result.length + " " + result[0].time);
-            results.push(result);
+        if (db) {
+            db.collection("interest").find({
+                time: {
+                    $gt: from,
+                    $lt: to
+                }
+            }).toArray(function (err, result) {
+                if (err)
+                    return reject(err);
+                console.log("method.getBetweenDates " + result.length + " " + result[0].time);
+                resolve(result);
+            });
+        }
+    });
 
-        });
-    }
-    console.log("method.getBetweenDates results.length " + results.length);
-    return results;
+
 }
 
 
@@ -114,6 +116,8 @@ method.insertDataMissingFrom = function (lastDataDate) {
     }
 
     if (db) {
+
+
         Promise.all([googleTrends.interestOverTime({
                 keyword: 'bitcoin', startTime: lastDataDate, endTime: moment().utc().toDate(), granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
         ]).then(function (values) {
@@ -135,6 +139,29 @@ method.insertDataMissingFrom = function (lastDataDate) {
 
 }
 
+method.getDataFromGoogleTrends = function (from, to) {
+
+    return new Promise((resolve, reject) => {
+        if (!db) {
+            initDb(function (err) {});
+            return reject(null);
+        }
+
+        if (db) {
+            Promise.all([googleTrends.interestOverTime({
+                    keyword: 'bitcoin', startTime: from, endTime: to, granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
+            ]).then(function (values) {
+                var dataSeriesNormalizer = new DataSeriesNormalizer();
+                timelineData = JSON.parse(values[0]).default.timelineData;
+                resolve(normalizedGoogleTrendsTimeline = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData));
+            }).catch(function (error) {
+                return reject(error);
+            });
+        }
+    });
+}
+
+
 function getFormatToBeStoredInDatabase(normalizedData) {
     dataToBeStoredInDatabase = [normalizedData.length];
     for (var i in normalizedData) {
@@ -149,8 +176,9 @@ function getFormatToBeStoredInDatabase(normalizedData) {
 function getTwoFirstEndOfDayTicks(data) {
     twoFirstEndOfDayTicks = new Array(2);
     firstFound = false;
-    for (var i in twoFirstEndOfDayTicks) {
+    for (i = 0; i < 2; i++) { 
         time = data[i].time;
+        console.log("getTwoFirstEndOfDayTicks time " + time);
         if (moment(time).diff(moment(time).endOf('day')) == 0) {
             if (firstFound) {
                 twoFirstEndOfDayTicks[1] = time;
@@ -163,27 +191,30 @@ function getTwoFirstEndOfDayTicks(data) {
 }
 
 function scaleAdjusting(lastDate, previousData) {
-    daysDiff = moment.diff(lastDate, 'days');
-    numberOfRequests = daysDiff / 5;
+    console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
+    daysDiff = moment().diff(lastDate, 'days');
+    numberOfRequests = Math.ceil(daysDiff / 5);
+    console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
     for (i = numberOfRequests - 1; i > -1; i--) {
-        from = moment.subtract(5 * i, 'days');
-        to = moment.subtract(5 * i - 7, 'weeks');
-        actualData = getData(from, to);
-        twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
-        sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
-        crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
-        insideRequestRatioActual = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
-        insideRequestRatioPrevious = twoFirstEndOfDayTicks[0].value / twoFirstEndOfDayTicks[1].value;
-        factorToBeNewRequestMultipliedBy = insideRequestRatioPrevious.value / insideRequestRatioActual.value / crossRequestRatio.value;
-        actualData[0].value = actualData[0].value/ crossRequestRatio;
-        for (i = 1; i < actualData.length; i++) { 
-             actualData[i].value = actualData[i].value *factorToBeNewRequestMultipliedBy;
-         }
-        previousData = actualData;
-
+        from = moment().subtract(5 * i+7, 'days').toDate();
+        to = moment().subtract(5 * i , 'days').toDate();
+        method.getDataFromGoogleTrends(from, to).then(function (actualData) {
+            console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length);
+            twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
+            console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
+            sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
+            console.log("getTwoSameTicks " + getTwoSameTicks[0].time + " " + getTwoSameTicks[1].time);
+            crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
+            insideRequestRatioActual = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
+            insideRequestRatioPrevious = twoFirstEndOfDayTicks[0].value / twoFirstEndOfDayTicks[1].value;
+            factorToBeNewRequestMultipliedBy = insideRequestRatioPrevious.value / insideRequestRatioActual.value / crossRequestRatio.value;
+            actualData[0].value = actualData[0].value / crossRequestRatio;
+            for (i = 1; i < actualData.length; i++) {
+                actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
+            }
+            previousData = actualData;
+        });
     }
-
-
 }
 
 
@@ -204,15 +235,19 @@ function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
 }
 
 method.getData = function () {
-    data = method.getBetweenDates(moment().subtract(4, 'days').toDate(), new Date());
+    method.getBetweenDates(moment().subtract(4, 'days').toDate(), new Date()).then(function (data) {
+        console.log("getBetweenDates1 " + data);
+        if (data.length == 0) {
+            data = method.getLastStoredWeekData();
+            console.log("getBetweenDates2 " + data.length);
+        }
+        lastDate = data[data.length - 1].time;
+        scaleAdjusting(lastDate, data);
+    });
 
 
-    console.log("getBetweenDates1 " + data);
-    if (data.length == 0) {
-        data = method.getLastStoredWeekData();
-        console.log("getBetweenDates2 " + data);
-    }
-    /*lastDate = data[data.length-1];*/
+
+
     // method.insertDataMissingFrom(moment().subtract(1, 'weeks').startOf('isoWeek').toDate());
     // return method.getBetweenDates(moment().subtract(1, 'weeks').startOf('isoWeek').toDate(), new Date());
 
