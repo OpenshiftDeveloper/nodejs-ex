@@ -69,22 +69,10 @@ method.getLastStoredWeekData = function () {
 
         if (db) {
             var mysort = {time: -1};
-            db.collection("interest").find().sort(mysort).limit(2).toArray(function (err, result) {
+            db.collection("interest").find().sort(mysort).limit(7).toArray(function (err, result) {
                 if (err)
                     return reject(err);
-                console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
-                resolve(result);
-            });
-
-            db.collection("interest").find({
-                time: {
-                    $gt: from,
-                    $lt: to
-                }
-            }).toArray(function (err, result) {
-                if (err)
-                    return reject(err);
-                console.log("method.getBetweenDates " + result.length + " " + result[0].time);
+                //console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
                 resolve(result);
             });
         }
@@ -109,7 +97,7 @@ method.getBetweenDates = function (from, to) {
             }).toArray(function (err, result) {
                 if (err)
                     return reject(err);
-                console.log("method.getBetweenDates " + result.length + " " + result[0].time);
+                //console.log("method.getBetweenDates " + result.length + " " + result[0].time);
                 resolve(result);
             });
         }
@@ -201,6 +189,33 @@ function getTwoFirstEndOfDayTicks(data) {
     }
 }
 
+function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
+    console.log("data");
+    console.log(data);
+    console.log("twoFirstEndOfDayTicks");
+    console.log(twoFirstEndOfDayTicks);
+    sameTicks = new Array(2);
+    var dataReversed = data.slice(0).reverse();
+    firstFound = false;
+    for (var i in dataReversed) {
+        time = data[i].time;
+        console.log("getTwoSameTicks time " + time);
+        console.log(moment(time).diff(twoFirstEndOfDayTicks[0].time));
+        console.log("getTwoSameTicks time2 " + time);
+        if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
+            if (firstFound) {
+                console.log("sameTicks r");
+                sameTicks[0] = data[i];
+                return sameTicks;
+            } else {
+                console.log("sameTicks 0");
+                 firstFound = true;
+                sameTicks[1] = data[i];
+            }
+        }
+    }
+}
+
 function getNewDataStartIndex(newDataTime, data) {
     for (i in data) {
         if (moment(data[i].time).diff(newDataTime) == 0) {
@@ -211,6 +226,7 @@ function getNewDataStartIndex(newDataTime, data) {
 }
 
 function scaleAdjusting(lastDate, previousData) {
+    previousData = previousData.reverse();
     console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
     daysDiff = moment().diff(lastDate, 'days');
     numberOfRequests = Math.ceil(daysDiff / 5);
@@ -219,7 +235,7 @@ function scaleAdjusting(lastDate, previousData) {
     for (i = numberOfRequests - 1; i > -1; i--) {
         from = moment().subtract(5 * i + 7, 'days').toDate();
         to = moment().subtract(5 * i, 'days').toDate();
-        method.getDataFromGoogleTrends(from, to).then(function (actualData) {
+        method.getDataFromGoogleTrends(from, to).then(function (actualData) {            
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
@@ -255,33 +271,16 @@ function scaleAdjusting(lastDate, previousData) {
 
 
 
-function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
-    console.log(data);
-    console.log(twoFirstEndOfDayTicks);
-    sameTicks = new Array(2);
-    var dataReversed = data.slice(0).reverse();
-    for (var i in dataReversed) {
-        time = data[i].time;
-        console.log("getTwoSameTicks time " + time);
-        console.log(moment(time).diff(twoFirstEndOfDayTicks[0].time));
-        if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
-            sameTicks[1] = data[i];
-            console.log(sameTicks);
-            return sameTicks;
-        }
-        if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
-            sameTicks[0] = data[i];
-        }
-    }
-}
+
 
 method.getData = function () {
-    method.getBetweenDates(moment().subtract(8, 'days').toDate(), new Date()).then(function (data) {
+    method.getBetweenDates(moment().subtract(7, 'days').toDate(), new Date()).then(function (data) {
         return new Promise((resolve, reject) => {
-            console.log("getBetweenDates1 " + data);
+            console.log("getBetweenDates1 " + data.length);
             if (data.length == 0) {
+                 console.log("getBetweenDates2 " + data.length);
                 return resolve(method.getLastStoredWeekData());
-                console.log("getBetweenDates2 " + data.length);
+               
             }
             return resolve(data);
         })
