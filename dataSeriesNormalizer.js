@@ -10,12 +10,12 @@ function DataSeriesNormalizer(age) {
 
 method.normalizeGoogleTrends = function (baseData, last5DaysHighResolution) {
     baseTimelineData = JSON.parse(baseData).default.timelineData;
-    last5DaysHighResolutionData = JSON.parse(last5DaysHighResolution).default.timelineData;
+   // last5DaysHighResolutionData = JSON.parse(last5DaysHighResolution).default.timelineData;
     normalizedBaseData = method.normalizeGoogleTrendsTimeline(baseTimelineData);
-    normalizedLast5DaysHighResolution = method.normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);
-    normalizedLast5Days = decideIfToConnectHighResDataOrDailyData(normalizedBaseData, normalizedLast5DaysHighResolution);
-    connectedData = getConnectedDataSeriesWithValueRatioCorrection(normalizedBaseData, normalizedLast5Days);
-    return connectedData;
+   // normalizedLast5DaysHighResolution = method.normalizeGoogleTrendsTimeline(last5DaysHighResolutionData);
+    //normalizedLast5Days = decideIfToConnectHighResDataOrDailyData(normalizedBaseData, normalizedLast5DaysHighResolution);
+    //connectedData = getConnectedDataSeriesWithValueRatioCorrection(normalizedBaseData, normalizedLast5Days);
+    return normalizedBaseData;
 };
 
 decideIfToConnectHighResDataOrDailyData = function (normalizedBaseData, normalizedLast5DaysHighResolution) {

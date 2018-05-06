@@ -6,7 +6,7 @@ var express = require('express'),
 Object.assign = require('object-assign')
 
 var ChartModelProducer = require("./chartModelProducer.js");
-var Database = require("./database.js");
+
 
 app.engine('html', require('ejs').renderFile);
 
@@ -109,10 +109,7 @@ app.get('/chartmodel', function (req, res) {
     //console.log(req.param("startTime"));
     //console.log(req.param("endTime"));
     var startTimeParam = req.param("startTime");
-    var endTimeParam = req.param("endTime");
-    
-    var database = new Database(db);
-    database.getData();
+    var endTimeParam = req.param("endTime");  
 
     var chartModelProducer = new ChartModelProducer();
     chartModelProducer.getChartModel(startTimeParam, endTimeParam).then(function (chartModel) {

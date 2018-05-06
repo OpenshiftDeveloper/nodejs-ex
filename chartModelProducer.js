@@ -10,6 +10,7 @@ const googleTrends = require('google-trends-api');
 
 var DataSeriesNormalizer = require("./dataSeriesNormalizer.js");
 var ChartValueDataProducer = require("./chartValueDataProducer.js");
+var Database = require("./database.js");
 
 method.getChartModel = function (startTimeParam, endTimeParam) {
     return new Promise(function (resolve) {
@@ -20,11 +21,9 @@ method.getChartModel = function (startTimeParam, endTimeParam) {
         coinDeskOptions = new Object();
         coinDeskOptions.start = startTime;
         coinDeskOptions.end = endTime;
+         var database = new Database();    
         Promise.all([coindesk.getHistoricalClosePrices(coinDeskOptions),
-            googleTrends.interestOverTime({
-                keyword: 'bitcoin', startTime: startTime, endTime: endTime, granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
-                    , googleTrends.interestOverTime({
-                        keyword: 'bitcoin', startTime: fiveDaysAgoTime, endTime: endTime, granularTimeResolution: true, granularTimeResolution: true, timezone: "0"}),
+            database.getData(moment().subtract(7, 'days').toDate(),new Date()),
             coindesk.getCurrentPrice()
         ]).then(function (values) {
             normalizedDataSeries = normalizeDataSeries(values);

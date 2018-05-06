@@ -89,12 +89,14 @@ method.getBetweenDates = function (from, to) {
         }
 
         if (db) {
+            //console.log("method.getBetweenDates find " + from + " " + to);
             db.collection("interest").find({
                 time: {
                     $gt: from,
                     $lt: to
                 }
             }).toArray(function (err, result) {
+
                 if (err)
                     return reject(err);
                 //console.log("method.getBetweenDates " + result.length + " " + result[0].time);
@@ -209,7 +211,7 @@ function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
                 return sameTicks;
             } else {
                 console.log("sameTicks 0");
-                 firstFound = true;
+                firstFound = true;
                 sameTicks[1] = data[i];
             }
         }
@@ -226,17 +228,24 @@ function getNewDataStartIndex(newDataTime, data) {
 }
 
 function scaleAdjusting(lastDate, previousData) {
+
     previousData = previousData.reverse();
     console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
     daysDiff = moment().diff(lastDate, 'days');
     numberOfRequests = Math.ceil(daysDiff / 5);
     console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
     missingData = [];
-    for (i = numberOfRequests - 1; i > -1; i--) {
-        from = moment().subtract(5 * i + 7, 'days').toDate();
-        to = moment().subtract(5 * i, 'days').toDate();
-        method.getDataFromGoogleTrends(from, to).then(function (actualData) {            
-            console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length);
+    getDataAdjustAndConnect(numberOfRequests-1, missingData, previousData);
+
+    
+}
+
+function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
+    return new Promise((resolve, reject) => {
+        from = moment().subtract(5 * numberOfRequests + 7, 'days').toDate();
+        to = moment().subtract(5 * numberOfRequests, 'days').toDate();
+        method.getDataFromGoogleTrends(from, to).then(function (actualData) {
+            console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length+" "+numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
             sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
@@ -260,38 +269,38 @@ function scaleAdjusting(lastDate, previousData) {
             console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);
             missingData = missingData.concat(actualData.slice(newDataStart));
-            previousData = actualData;
+            
             console.log("missingData");
             console.log(missingData);
-
+            if (numberOfRequests > -1) {
+                getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData);
+            } else {
+                resolve(missingData);
+            }
         });
+    });
 
-    }
 }
 
 
+method.getData = function (fromDate, toDate) {
 
+    return new Promise((resolve2, reject) => {
+        method.getBetweenDates(fromDate, toDate).then(function (data) {
+            return new Promise((resolve, reject) => {
+                console.log("getBetweenDates1 " + data.length);
+                if (data.length == 0) {
+                    console.log("getBetweenDates2 " + data.length);
+                    return resolve(method.getLastStoredWeekData());
 
-
-method.getData = function () {
-    method.getBetweenDates(moment().subtract(7, 'days').toDate(), new Date()).then(function (data) {
-        return new Promise((resolve, reject) => {
-            console.log("getBetweenDates1 " + data.length);
-            if (data.length == 0) {
-                 console.log("getBetweenDates2 " + data.length);
-                return resolve(method.getLastStoredWeekData());
-               
-            }
-            return resolve(data);
-        })
-    }).then(function (data) {
-        lastDate = data[data.length - 1].time;
-        scaleAdjusting(lastDate, data);
+                }
+                return resolve(data);
+            })
+        }).then(function (data) {
+            lastDate = data[0].time;
+            resolve2(scaleAdjusting(lastDate, data));
+        });
     });
-
-
-
-
     // method.insertDataMissingFrom(moment().subtract(1, 'weeks').startOf('isoWeek').toDate());
     // return method.getBetweenDates(moment().subtract(1, 'weeks').startOf('isoWeek').toDate(), new Date());
 
