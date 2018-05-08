@@ -256,6 +256,7 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
         from = moment().subtract(5 * numberOfRequests + 7, 'days').toDate();
         to = moment().subtract(5 * numberOfRequests, 'days').toDate();
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
+            
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length+" "+numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
@@ -276,13 +277,17 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
-            //console.log(actualData);
+            console.log("previousData");
+            console.log(previousData);
+            console.log("actualData "+previousData[previousData.length-1].time);
+            console.log(actualData);
             //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
-            newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);
+            newDataStart = getNewDataStartIndex(previousData[previousData.length-1].time, actualData);
+            console.log("newDataStart "+newDataStart);
             missingData = missingData.concat(actualData.slice(newDataStart));
             
             console.log("missingData");
-            //console.log(missingData);
+            console.log(missingData);
             if (numberOfRequests > 0) {
                 getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData);
             } else {
