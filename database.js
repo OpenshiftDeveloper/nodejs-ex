@@ -140,7 +140,7 @@ method.insertDataMissingFrom = function (lastDataDate) {
 }
 
 method.getDataFromGoogleTrends = function (from, to) {
-    
+
     return new Promise((resolve, reject) => {
         if (!db) {
             initDb(function (err) {});
@@ -151,7 +151,7 @@ method.getDataFromGoogleTrends = function (from, to) {
             Promise.all([googleTrends.interestOverTime({
                     keyword: 'bitcoin', startTime: from, endTime: to, granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
             ]).then(function (values) {
-                console.log("getDataFromGoogleTrends "+from+" "+to);
+                console.log("getDataFromGoogleTrends " + from + " " + to);
                 console.log(values[0]);
                 var dataSeriesNormalizer = new DataSeriesNormalizer();
                 timelineData = JSON.parse(values[0]).default.timelineData;
@@ -177,7 +177,7 @@ function getFormatToBeStoredInDatabase(normalizedData) {
 }
 
 function getTwoFirstEndOfDayTicks(data) {
-   console.log("getTwoFirstEndOfDayTicks");
+    console.log("getTwoFirstEndOfDayTicks");
     /* console.log(data);*/
     twoFirstEndOfDayTicks = new Array(2);
     firstFound = false;
@@ -186,12 +186,12 @@ function getTwoFirstEndOfDayTicks(data) {
         if (moment(tick.time).diff(moment(tick.time).startOf('day')) == 0) {
             if (firstFound) {
                 twoFirstEndOfDayTicks[1] = tick;
-               //  console.log(tick);
+                //  console.log(tick);
                 return twoFirstEndOfDayTicks;
             } else {
                 twoFirstEndOfDayTicks[0] = tick;
                 firstFound = true;
-               //  console.log(tick);
+                //  console.log(tick);
             }
         }
     }
@@ -200,32 +200,32 @@ function getTwoFirstEndOfDayTicks(data) {
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
     console.log("twoFirstEndOfDayTicks");
     /*console.log("data");
-    console.log(data);
-    
-    console.log(twoFirstEndOfDayTicks);*/
+     console.log(data);
+     
+     console.log(twoFirstEndOfDayTicks);*/
     sameTicks = new Array(2);
     var dataReversed = data.slice(0).reverse();
     firstFound = false;
     for (var i in dataReversed) {
         time = dataReversed[i].time;
-       /* console.log("getTwoSameTicks time " + moment(time).format());
-        console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
-        console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
-        console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));*/
-        
+        /* console.log("getTwoSameTicks time " + moment(time).format());
+         console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
+         console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
+         console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));*/
+
         if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
-            
-                console.log("sameTicks r");
-                sameTicks[0] = dataReversed[i];
-                return sameTicks;
-                }
-         if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {   
-             
-                //console.log("sameTicks 0");
-                firstFound = true;
-                sameTicks[1] = dataReversed[i];
-            }
-        
+
+            console.log("sameTicks r");
+            sameTicks[0] = dataReversed[i];
+            return sameTicks;
+        }
+        if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
+
+            //console.log("sameTicks 0");
+            firstFound = true;
+            sameTicks[1] = dataReversed[i];
+        }
+
     }
 }
 
@@ -239,16 +239,19 @@ function getNewDataStartIndex(newDataTime, data) {
 }
 
 function scaleAdjusting(lastDate, previousData) {
+    return new Promise((resolve, reject) => {
+        previousData = previousData.reverse();
+        console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
+        daysDiff = moment().diff(lastDate, 'days');
+        numberOfRequests = Math.ceil(daysDiff / 5);
+        console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
+        missingData = [];
+        getDataAdjustAndConnect(numberOfRequests - 1, missingData, previousData).then(function (data) {
+            console.log(data);
+            resolve(data);
+        });
+    });
 
-    previousData = previousData.reverse();
-    console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
-    daysDiff = moment().diff(lastDate, 'days');
-    numberOfRequests = Math.ceil(daysDiff / 5);
-    console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
-    missingData = [];
-    getDataAdjustAndConnect(numberOfRequests-1, missingData, previousData);
-
-    
 }
 
 function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
@@ -256,8 +259,8 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
         from = moment().subtract(5 * numberOfRequests + 7, 'days').toDate();
         to = moment().subtract(5 * numberOfRequests, 'days').toDate();
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
-            
-            console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length+" "+numberOfRequests);
+
+            console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length + " " + numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
             sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
@@ -277,19 +280,21 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
-            console.log("previousData");
-            console.log(previousData);
-            console.log("actualData "+previousData[previousData.length-1].time);
-            console.log(actualData);
+            /* console.log("previousData");
+             console.log(previousData);
+             console.log("actualData " + previousData[previousData.length - 1].time);
+             console.log(actualData);*/
             //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
-            newDataStart = getNewDataStartIndex(previousData[previousData.length-1].time, actualData);
-            console.log("newDataStart "+newDataStart);
+            newDataStart = getNewDataStartIndex(previousData[previousData.length - 1].time, actualData);
+            //console.log("newDataStart " + newDataStart);
             missingData = missingData.concat(actualData.slice(newDataStart));
-            
-            console.log("missingData");
-            console.log(missingData);
+
+            /*console.log("missingData");
+             console.log(missingData);*/
             if (numberOfRequests > 0) {
-                getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData);
+                getDataAdjustAndConnect(numberOfRequests - 1, missingData, previousData).then(function (data) {                    
+                    resolve(data);
+                });
             } else {
                 resolve(missingData);
             }
@@ -314,7 +319,9 @@ method.getData = function (fromDate, toDate) {
             })
         }).then(function (data) {
             lastDate = data[0].time;
-            resolve2(scaleAdjusting(lastDate, data));
+            scaleAdjusting(lastDate, data).then(function (data) {
+                resolve2(data);
+            });
         });
     });
     // method.insertDataMissingFrom(moment().subtract(1, 'weeks').startOf('isoWeek').toDate());
