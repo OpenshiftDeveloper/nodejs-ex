@@ -79,10 +79,10 @@ function  updateChartOnDateChange($scope, moment) {
                 $scope.endDate);
     }, true);
 
-    $scope.$watch('endDate', function () {                    
+   /* $scope.$watch('endDate', function () {                    
         $scope.loadChartModel($scope.startDate,
                  adjustTheEndDateToUtcDayEnd($scope.endDate, moment));                 
-    }, true);
+    }, true);*/
 }
 
 function  adjustTheStartDateToUtcDayStart(startDate, moment) {  

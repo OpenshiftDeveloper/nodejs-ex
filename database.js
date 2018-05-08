@@ -69,7 +69,7 @@ method.getLastStoredWeekData = function () {
 
         if (db) {
             var mysort = {time: -1};
-            db.collection("interest").find().sort(mysort).limit(7).toArray(function (err, result) {
+            db.collection("interest").find().sort(mysort).limit(24).toArray(function (err, result) {
                 if (err)
                     return reject(err);
                 //console.log("getLastStoredWeekData " + result + " " + result[0].time + " " + result[0].value);
@@ -140,7 +140,7 @@ method.insertDataMissingFrom = function (lastDataDate) {
 }
 
 method.getDataFromGoogleTrends = function (from, to) {
-
+    
     return new Promise((resolve, reject) => {
         if (!db) {
             initDb(function (err) {});
@@ -151,6 +151,8 @@ method.getDataFromGoogleTrends = function (from, to) {
             Promise.all([googleTrends.interestOverTime({
                     keyword: 'bitcoin', startTime: from, endTime: to, granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
             ]).then(function (values) {
+                console.log("getDataFromGoogleTrends "+from+" "+to);
+                console.log(values[0]);
                 var dataSeriesNormalizer = new DataSeriesNormalizer();
                 timelineData = JSON.parse(values[0]).default.timelineData;
                 normalizedData = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData);
@@ -175,6 +177,8 @@ function getFormatToBeStoredInDatabase(normalizedData) {
 }
 
 function getTwoFirstEndOfDayTicks(data) {
+   console.log("getTwoFirstEndOfDayTicks");
+    /* console.log(data);*/
     twoFirstEndOfDayTicks = new Array(2);
     firstFound = false;
     for (i in data) {
@@ -182,39 +186,46 @@ function getTwoFirstEndOfDayTicks(data) {
         if (moment(tick.time).diff(moment(tick.time).startOf('day')) == 0) {
             if (firstFound) {
                 twoFirstEndOfDayTicks[1] = tick;
+               //  console.log(tick);
                 return twoFirstEndOfDayTicks;
             } else {
                 twoFirstEndOfDayTicks[0] = tick;
                 firstFound = true;
+               //  console.log(tick);
             }
         }
     }
 }
 
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
-    console.log("data");
-    console.log(data);
     console.log("twoFirstEndOfDayTicks");
-    console.log(twoFirstEndOfDayTicks);
+    /*console.log("data");
+    console.log(data);
+    
+    console.log(twoFirstEndOfDayTicks);*/
     sameTicks = new Array(2);
     var dataReversed = data.slice(0).reverse();
     firstFound = false;
     for (var i in dataReversed) {
-        time = data[i].time;
-        console.log("getTwoSameTicks time " + time);
-        console.log(moment(time).diff(twoFirstEndOfDayTicks[0].time));
-        console.log("getTwoSameTicks time2 " + time);
-        if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
-            if (firstFound) {
+        time = dataReversed[i].time;
+       /* console.log("getTwoSameTicks time " + moment(time).format());
+        console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
+        console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
+        console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));*/
+        
+        if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
+            
                 console.log("sameTicks r");
-                sameTicks[0] = data[i];
+                sameTicks[0] = dataReversed[i];
                 return sameTicks;
-            } else {
-                console.log("sameTicks 0");
+                }
+         if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {   
+             
+                //console.log("sameTicks 0");
                 firstFound = true;
-                sameTicks[1] = data[i];
+                sameTicks[1] = dataReversed[i];
             }
-        }
+        
     }
 }
 
@@ -247,32 +258,32 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length+" "+numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
-            console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
+            //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
             sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
             console.log("getTwoSameTicks times " + sameTicksInPreviousData[0].time + " " + sameTicksInPreviousData[1].time);
             console.log("getTwoSameTicks values " + sameTicksInPreviousData[0].value + " " + sameTicksInPreviousData[1].value);
             crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
-            console.log("crossRequestRatio " + crossRequestRatio);
+            //console.log("crossRequestRatio " + crossRequestRatio);
             insideRequestRatioActual = twoFirstEndOfDayTicksInActualData[0].value / twoFirstEndOfDayTicksInActualData[1].value;
-            console.log("insideRequestRatioActual " + insideRequestRatioActual);
+            //console.log("insideRequestRatioActual " + insideRequestRatioActual);
             insideRequestRatioPrevious = sameTicksInPreviousData[0].value / sameTicksInPreviousData[1].value;
-            console.log("insideRequestRatioPrevious " + insideRequestRatioPrevious);
+            //console.log("insideRequestRatioPrevious " + insideRequestRatioPrevious);
             factorToBeNewRequestMultipliedBy = insideRequestRatioActual / insideRequestRatioPrevious / crossRequestRatio;
-            console.log("factorToBeNewRequestMultipliedBy " + factorToBeNewRequestMultipliedBy);
-            console.log(actualData);
-            console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
+            //console.log("factorToBeNewRequestMultipliedBy " + factorToBeNewRequestMultipliedBy);
+            //console.log(actualData);
+            //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             actualData[0].value = actualData[0].value / crossRequestRatio;
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
-            console.log(actualData);
-            console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
+            //console.log(actualData);
+            //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             newDataStart = getNewDataStartIndex(twoFirstEndOfDayTicksInActualData[1].time, actualData);
             missingData = missingData.concat(actualData.slice(newDataStart));
             
             console.log("missingData");
-            console.log(missingData);
-            if (numberOfRequests > -1) {
+            //console.log(missingData);
+            if (numberOfRequests > 0) {
                 getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData);
             } else {
                 resolve(missingData);
@@ -289,7 +300,7 @@ method.getData = function (fromDate, toDate) {
         method.getBetweenDates(fromDate, toDate).then(function (data) {
             return new Promise((resolve, reject) => {
                 console.log("getBetweenDates1 " + data.length);
-                if (data.length == 0) {
+                if (data.length < 14) {
                     console.log("getBetweenDates2 " + data.length);
                     return resolve(method.getLastStoredWeekData());
 
