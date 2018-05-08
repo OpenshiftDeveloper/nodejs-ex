@@ -198,20 +198,20 @@ function getTwoFirstEndOfDayTicks(data) {
 }
 
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
-    console.log("twoFirstEndOfDayTicks");
-    /*console.log("data");
+    console.log("getTwoSameTicks");
+    console.log("data");
      console.log(data);
      
-     console.log(twoFirstEndOfDayTicks);*/
+     console.log(getTwoSameTicks);
     sameTicks = new Array(2);
     var dataReversed = data.slice(0).reverse();
     firstFound = false;
     for (var i in dataReversed) {
         time = dataReversed[i].time;
-        /* console.log("getTwoSameTicks time " + moment(time).format());
+         console.log("getTwoSameTicks time " + moment(time).format());
          console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
          console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
-         console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));*/
+         console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));
 
         if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
 
@@ -221,7 +221,7 @@ function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
         }
         if (moment(time).diff(twoFirstEndOfDayTicks[1].time) == 0) {
 
-            //console.log("sameTicks 0");
+            console.log("sameTicks 0");
             firstFound = true;
             sameTicks[1] = dataReversed[i];
         }
@@ -247,7 +247,7 @@ function scaleAdjusting(lastDate, previousData) {
         console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
         missingData = [];
         getDataAdjustAndConnect(numberOfRequests - 1, missingData, previousData).then(function (data) {
-            console.log(data);
+           
             resolve(data);
         });
     });
@@ -259,7 +259,10 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
         from = moment().subtract(5 * numberOfRequests + 7, 'days').toDate();
         to = moment().subtract(5 * numberOfRequests, 'days').toDate();
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
-
+/*console.log("previousData");
+             console.log(previousData);
+             console.log("actualData " + previousData[previousData.length - 1].time);
+             console.log(actualData);*/
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length + " " + numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
@@ -280,19 +283,16 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
-            /* console.log("previousData");
-             console.log(previousData);
-             console.log("actualData " + previousData[previousData.length - 1].time);
-             console.log(actualData);*/
+             
             //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             newDataStart = getNewDataStartIndex(previousData[previousData.length - 1].time, actualData);
             //console.log("newDataStart " + newDataStart);
             missingData = missingData.concat(actualData.slice(newDataStart));
 
-            /*console.log("missingData");
-             console.log(missingData);*/
+           // console.log("missingData");
+        //     console.log(missingData);
             if (numberOfRequests > 0) {
-                getDataAdjustAndConnect(numberOfRequests - 1, missingData, previousData).then(function (data) {                    
+                getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData).then(function (data) {                    
                     resolve(data);
                 });
             } else {

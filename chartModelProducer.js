@@ -36,8 +36,9 @@ method.getChartModel = function (startTimeParam, endTimeParam) {
 normalizeDataSeries = function (values) {
     var dataSeriesNormalizer = new DataSeriesNormalizer();
     var normalizedDataSeries = new Object();
-    normalizedDataSeries.CoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0], values[3]);
-    normalizedDataSeries.GoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1], values[2]);
+    normalizedDataSeries.CoinDesk = dataSeriesNormalizer.normalizeCoinDesk(values[0], values[2]);
+    //normalizedDataSeries.GoogleTrends = dataSeriesNormalizer.normalizeGoogleTrends(values[1], values[2]);
+    normalizedDataSeries.GoogleTrends = values[1];
     return normalizedDataSeries;
 }
 
