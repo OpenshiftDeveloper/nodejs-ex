@@ -199,19 +199,19 @@ function getTwoFirstEndOfDayTicks(data) {
 
 function getTwoSameTicks(data, twoFirstEndOfDayTicks) {
     console.log("getTwoSameTicks");
-    console.log("data");
-     console.log(data);
-     
-     console.log(getTwoSameTicks);
+    // console.log("data");
+    //console.log(data);
+
+    console.log(getTwoSameTicks);
     sameTicks = new Array(2);
     var dataReversed = data.slice(0).reverse();
     firstFound = false;
     for (var i in dataReversed) {
         time = dataReversed[i].time;
-         console.log("getTwoSameTicks time " + moment(time).format());
-         console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
-         console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
-         console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));
+        console.log("getTwoSameTicks time " + moment(time).format());
+        console.log("getTwoSameTicks time0 " + twoFirstEndOfDayTicks[0].time.format());
+        console.log("getTwoSameTicks time1 " + twoFirstEndOfDayTicks[1].time.format());
+        console.log(moment(time).diff(twoFirstEndOfDayTicks[1].time));
 
         if (moment(time).diff(twoFirstEndOfDayTicks[0].time) == 0) {
 
@@ -238,16 +238,28 @@ function getNewDataStartIndex(newDataTime, data) {
     }
 }
 
+const SUB_QUERY_LENGHT = 4;
+
+const EARLIEST_DATE = moment("2018-01-01").utc().endOf('day').utc();
+
+function getInitialMissingData() {
+    return new Promise((resolve, reject) => {
+        method.getDataFromGoogleTrends(EARLIEST_DATE.toDate(), moment(EARLIEST_DATE).add(SUB_QUERY_LENGHT).toDate()).then(function (data) {
+            resolve(data);
+        });
+    });
+}
+
 function scaleAdjusting(lastDate, previousData) {
     return new Promise((resolve, reject) => {
         previousData = previousData.reverse();
         console.log("scaleAdjusting start lastDate previousData " + lastDate + " " + previousData);
         daysDiff = moment().diff(lastDate, 'days');
-        numberOfRequests = Math.ceil(daysDiff / 5);
+        numberOfRequests = Math.ceil(daysDiff / SUB_QUERY_LENGHT);
         console.log(" scaleAdjusting numberOfRequests " + numberOfRequests);
         missingData = [];
         getDataAdjustAndConnect(numberOfRequests - 1, missingData, previousData).then(function (data) {
-           
+
             resolve(data);
         });
     });
@@ -256,13 +268,13 @@ function scaleAdjusting(lastDate, previousData) {
 
 function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
     return new Promise((resolve, reject) => {
-        from = moment().subtract(5 * numberOfRequests + 7, 'days').toDate();
-        to = moment().subtract(5 * numberOfRequests, 'days').toDate();
+        from = moment().subtract(SUB_QUERY_LENGHT * numberOfRequests + SUB_QUERY_LENGHT + 2, 'days').toDate();
+        to = moment().subtract(SUB_QUERY_LENGHT * numberOfRequests, 'days').toDate();
         method.getDataFromGoogleTrends(from, to).then(function (actualData) {
-/*console.log("previousData");
-             console.log(previousData);
-             console.log("actualData " + previousData[previousData.length - 1].time);
-             console.log(actualData);*/
+            console.log("previousData");
+            console.log(previousData);
+            console.log("actualData " + previousData[previousData.length - 1].time);
+            console.log(actualData);
             console.log("scaleAdjusting from to size " + from + " " + to + " " + actualData.length + " " + numberOfRequests);
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
@@ -283,16 +295,16 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
             for (i = 1; i < actualData.length; i++) {
                 actualData[i].value = actualData[i].value * factorToBeNewRequestMultipliedBy;
             }
-             
+
             //console.log(actualData[0].value / actualData[1].value + " " + insideRequestRatioPrevious + " " + insideRequestRatioActual);
             newDataStart = getNewDataStartIndex(previousData[previousData.length - 1].time, actualData);
             //console.log("newDataStart " + newDataStart);
             missingData = missingData.concat(actualData.slice(newDataStart));
 
-           // console.log("missingData");
-        //     console.log(missingData);
+            console.log("missingData");
+            console.log(missingData);
             if (numberOfRequests > 0) {
-                getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData).then(function (data) {                    
+                getDataAdjustAndConnect(numberOfRequests - 1, missingData, actualData).then(function (data) {
                     resolve(data);
                 });
             } else {
@@ -312,10 +324,15 @@ method.getData = function (fromDate, toDate) {
                 console.log("getBetweenDates1 " + data.length);
                 if (data.length < 14) {
                     console.log("getBetweenDates2 " + data.length);
-                    return resolve(method.getLastStoredWeekData());
-
+                    return  method.getLastStoredWeekData().then(function (lastStoredWeekData) {
+                        if(lastStoredWeekData.length>0){
+                            resolve(lastStoredWeekData);
+                        }else{
+                            resolve(getInitialMissingData());
+                        }                        
+                    });
                 }
-                return resolve(data);
+                resolve(data);
             })
         }).then(function (data) {
             lastDate = data[0].time;
