@@ -110,33 +110,19 @@ method.getBetweenDates = function (from, to) {
 
 
 
-method.insertDataMissingFrom = function (lastDataDate) {
+method.insertDataToDb = function (data) {
     if (!db) {
         initDb(function (err) {});
     }
 
     if (db) {
-
-
-        Promise.all([googleTrends.interestOverTime({
-                keyword: 'bitcoin', startTime: lastDataDate, endTime: moment().utc().toDate(), granularTimeResolution: true, granularTimeResolution: true, timezone: "0"})
-        ]).then(function (values) {
-            var dataSeriesNormalizer = new DataSeriesNormalizer();
-
-            timelineData = JSON.parse(values[0]).default.timelineData;
-            normalizedGoogleTrendsTimeline = dataSeriesNormalizer.normalizeGoogleTrendsTimeline(timelineData);
-            dataToBeStored = getFormatToBeStoredInDatabase(normalizedGoogleTrendsTimeline);
-
-            console.log(dataToBeStored);
-            /*db.collection("interest").insertMany(dataToBeStored, function (err, res) {
-             if (err)
-             throw err;
-             console.log("Number of documents inserted: " + res.insertedCount);
-             db.close();
-             });*/
-        })
+        console.log(data);
+        db.collection("interest").insertMany(data, function (err, res) {
+            if (err)
+                throw err;
+            console.log("Number of documents inserted: " + res.insertedCount);           
+        });
     }
-
 }
 
 method.getDataFromGoogleTrends = function (from, to) {
@@ -170,7 +156,7 @@ function getFormatToBeStoredInDatabase(normalizedData) {
     for (var i in normalizedData) {
         tick = new Object();
         tick.time = normalizedData[i].time.toDate();
-        tick.value = normalizedData[i].value[0];
+        tick.value = normalizedData[i].value;
         dataToBeStoredInDatabase[i] = tick;
     }
     return dataToBeStoredInDatabase;
@@ -244,8 +230,11 @@ const EARLIEST_DATE = moment("2018-01-01").utc().endOf('day').utc();
 
 function getInitialMissingData() {
     return new Promise((resolve, reject) => {
-        method.getDataFromGoogleTrends(EARLIEST_DATE.toDate(), moment(EARLIEST_DATE).add(SUB_QUERY_LENGHT).toDate()).then(function (data) {
-            resolve(data);
+        console.log(EARLIEST_DATE.toDate());
+        console.log(moment(EARLIEST_DATE).add(SUB_QUERY_LENGHT, 'days').toDate());
+        
+        method.getDataFromGoogleTrends(EARLIEST_DATE.toDate(), moment(EARLIEST_DATE).add(SUB_QUERY_LENGHT, 'days').toDate()).then(function (data) {            
+            resolve(data.reverse());
         });
     });
 }
@@ -279,8 +268,8 @@ function getDataAdjustAndConnect(numberOfRequests, missingData, previousData) {
             twoFirstEndOfDayTicksInActualData = getTwoFirstEndOfDayTicks(actualData);
             //console.log("twoFirstEndOfDayTicksInActualData " + twoFirstEndOfDayTicksInActualData[0].time + " " + twoFirstEndOfDayTicksInActualData[1].time);
             sameTicksInPreviousData = getTwoSameTicks(previousData, twoFirstEndOfDayTicksInActualData);
-            console.log("getTwoSameTicks times " + sameTicksInPreviousData[0].time + " " + sameTicksInPreviousData[1].time);
-            console.log("getTwoSameTicks values " + sameTicksInPreviousData[0].value + " " + sameTicksInPreviousData[1].value);
+           // console.log("getTwoSameTicks times " + sameTicksInPreviousData[0].time + " " + sameTicksInPreviousData[1].time);
+           // console.log("getTwoSameTicks values " + sameTicksInPreviousData[0].value + " " + sameTicksInPreviousData[1].value);
             crossRequestRatio = twoFirstEndOfDayTicksInActualData[0].value / sameTicksInPreviousData[0].value;
             //console.log("crossRequestRatio " + crossRequestRatio);
             insideRequestRatioActual = twoFirstEndOfDayTicksInActualData[0].value / twoFirstEndOfDayTicksInActualData[1].value;
@@ -325,24 +314,29 @@ method.getData = function (fromDate, toDate) {
                 if (data.length < 14) {
                     console.log("getBetweenDates2 " + data.length);
                     return  method.getLastStoredWeekData().then(function (lastStoredWeekData) {
-                        if(lastStoredWeekData.length>0){
+                        if (lastStoredWeekData.length > 0) {
                             resolve(lastStoredWeekData);
-                        }else{
+                        } else {
+                            console.log("getInitialMissingData " + data.length);
                             resolve(getInitialMissingData());
-                        }                        
+                        }
                     });
                 }
                 resolve(data);
             })
-        }).then(function (data) {
+        }).then(function (data) {            
             lastDate = data[0].time;
             scaleAdjusting(lastDate, data).then(function (data) {
+                console.log("data scaleAdjusting");
+                console.log(data);
+                 dataToBeStored = getFormatToBeStoredInDatabase(data);
+                 console.log("dataToBeStored ");
+                console.log(dataToBeStored);
+                 method.insertDataToDb(dataToBeStored);
                 resolve2(data);
             });
         });
-    });
-    // method.insertDataMissingFrom(moment().subtract(1, 'weeks').startOf('isoWeek').toDate());
-    // return method.getBetweenDates(moment().subtract(1, 'weeks').startOf('isoWeek').toDate(), new Date());
+    });   
 
 }
 
